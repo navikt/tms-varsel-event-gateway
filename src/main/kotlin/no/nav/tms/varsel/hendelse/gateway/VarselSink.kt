@@ -13,8 +13,6 @@ class VarselSink(
 ) :
     River.PacketListener {
 
-    private val log = KotlinLogging.logger {}
-
     init {
         River(rapidsConnection).apply {
             validate { it.demandAny("@event_name", listOf("aktivert", "inaktivert")) }
@@ -29,7 +27,7 @@ class VarselSink(
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val hendelse = VarselHendelse(
             hendelseType = packet["@event_name"].textValue(),
-            varselType = packet["varselType"].textValue(),
+            varselType = packet["varselType"].textValue().lowercase(),
             eventId = packet["eventId"].textValue(),
             appnavn = packet["appnavn"].textValue(),
         )
@@ -37,10 +35,6 @@ class VarselSink(
         hendelseProducer.sendVarselHendelse(hendelse)
 
         PrometheusMetricsCollector.countVarselHendelse(hendelse)
-    }
-
-    override fun onError(problems: MessageProblems, context: MessageContext) {
-        log.info(problems.toString())
     }
 }
 

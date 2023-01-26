@@ -37,7 +37,7 @@ dependencies {
 }
 
 application {
-    mainClass.set("no.nav.tms.utkast.ApplicationKt")
+    mainClass.set("no.nav.tms.varsel.hendelse.gateway.ApplicationKt")
 }
 
 tasks {

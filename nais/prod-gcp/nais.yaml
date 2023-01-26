@@ -1,0 +1,34 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: tms-varsel-event-gateway
+  namespace: min-side
+  labels:
+    team: min-side
+spec:
+  envFrom:
+    - secret: tms-varsel-event-gateway-secrets
+  image: {{version}}
+  port: 8080
+  liveness:
+    path: /isalive
+    initialDelay: 30
+  readiness:
+    path: /isready
+    initialDelay: 5
+  prometheus:
+    path: /metrics
+    enabled: true
+  replicas:
+    min: 2
+    max: 4
+    cpuThresholdPercentage: 100
+  kafka:
+    pool: nav-prod
+  resources:
+    limits:
+      cpu: "1"
+      memory: 1024Mi
+    requests:
+      cpu: "50m"
+      memory: 256Mi

@@ -1,15 +1,11 @@
 package no.nav.tms.varsel.hendelse.gateway
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.ObjectNode
-import io.kotest.matchers.maps.shouldContain
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.apache.kafka.clients.producer.MockProducer
 import org.apache.kafka.common.serialization.StringSerializer
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
@@ -48,9 +44,10 @@ internal class VarselSinkTest {
     @ValueSource(strings = ["beskjed", "oppgave", "innboks"])
     fun `plukker opp interne aktivert-eventer og publiserer eksternt`(varselType: String) {
         val eventId = randomUUID()
-        val appnavn = "produsent"
+        val appnavn = "produsent_app"
+        val namespace = "produsent_namespace"
 
-        val varselAktivert = varselAktivertPacket(varselType, eventId, appnavn)
+        val varselAktivert = varselAktivertPacket(varselType, eventId, namespace, appnavn)
 
         testRapid.sendTestMessage(varselAktivert)
 
@@ -61,6 +58,7 @@ internal class VarselSinkTest {
         hendelseJson["@event_name"].textValue() shouldBe "aktivert"
         hendelseJson["varselType"].textValue() shouldBe varselType
         hendelseJson["eventId"].textValue() shouldBe eventId
+        hendelseJson["namespace"].textValue() shouldBe namespace
         hendelseJson["appnavn"].textValue() shouldBe appnavn
     }
 
@@ -68,9 +66,10 @@ internal class VarselSinkTest {
     @ValueSource(strings = ["beskjed", "oppgave", "innboks"])
     fun `plukker opp interne inaktivert-eventer og publiserer eksternt`(varselType: String) {
         val eventId = randomUUID()
-        val appnavn = "produsent"
+        val appnavn = "produsent_app"
+        val namespace = "produsent_namespace"
 
-        val varselAktivert = varselInktivertPacket(varselType, eventId, appnavn)
+        val varselAktivert = varselInaktivertPacket(varselType, eventId, namespace, appnavn)
 
         testRapid.sendTestMessage(varselAktivert)
 
@@ -81,6 +80,7 @@ internal class VarselSinkTest {
         hendelseJson["@event_name"].textValue() shouldBe "inaktivert"
         hendelseJson["varselType"].textValue() shouldBe varselType
         hendelseJson["eventId"].textValue() shouldBe eventId
+        hendelseJson["namespace"].textValue() shouldBe namespace
         hendelseJson["appnavn"].textValue() shouldBe appnavn
     }
 

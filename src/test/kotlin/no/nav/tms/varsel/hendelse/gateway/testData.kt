@@ -6,6 +6,7 @@ import org.intellij.lang.annotations.Language
 fun varselAktivertPacket(
     varselType: String,
     eventId: String,
+    namespace: String,
     appnavn: String
 ) = """
     {
@@ -14,7 +15,7 @@ fun varselAktivertPacket(
       "eventId": "$eventId",
       "appnavn": "$appnavn",
       "systembruker": "N/A",
-      "namespace": "namespace",
+      "namespace": "$namespace",
       "eventTidspunkt": "${LocalDateTimeHelper.nowAtUtc()}",
       "forstBehandlet": "${LocalDateTimeHelper.nowAtUtc()}",
       "fodselsnummer": "01234567890",
@@ -33,15 +34,17 @@ fun varselAktivertPacket(
 """.trimIndent()
 
 @Language("JSON")
-internal fun varselInktivertPacket(
+internal fun varselInaktivertPacket(
     varselType: String,
     eventId: String,
-    appnavn: String
+    namespace: String,
+    appnavn: String,
 ) = """
     {
       "@event_name": "inaktivert",
       "varselType": "$varselType",
       "eventId": "$eventId",
+      "namespace": "$namespace",
       "appnavn": "$appnavn"
     }
 """.trimIndent()

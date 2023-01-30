@@ -19,6 +19,7 @@ class VarselSink(
             validate {
                 it.requireKey("varselType")
                 it.requireKey("eventId")
+                it.requireKey("namespace")
                 it.requireKey("appnavn")
             }
         }.register(this)
@@ -29,6 +30,7 @@ class VarselSink(
             hendelseType = packet["@event_name"].textValue(),
             varselType = packet["varselType"].textValue().lowercase(),
             eventId = packet["eventId"].textValue(),
+            namespace = packet["namespace"].textValue(),
             appnavn = packet["appnavn"].textValue(),
         )
 

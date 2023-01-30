@@ -4,6 +4,7 @@ data class VarselHendelse(
     val hendelseType: String,
     val varselType: String,
     val eventId: String,
+    val namespace: String,
     val appnavn: String
 ) {
     fun toJson() = """
@@ -11,6 +12,7 @@ data class VarselHendelse(
             "@event_name": "$hendelseType",
             "varselType": "$varselType",
             "eventId": "$eventId",
+            "namespace": "$namespace",
             "appnavn": "$appnavn"
         }
     """.trimIndent()

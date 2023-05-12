@@ -4,13 +4,15 @@ import org.intellij.lang.annotations.Language
 
 @Language("JSON")
 fun varselAktivertPacket(
-    varselType: String,
-    eventId: String,
-    namespace: String,
-    appnavn: String
+    varselType: String = "beskjed",
+    eventId: String = "123",
+    namespace: String = "namespace",
+    appnavn: String = "appnavn",
+    source: String? = null
 ) = """
     {
       "@event_name": "aktivert",
+      ${if (source != null) "\"@source\":\"$source\"," else ""}
       "varselType": "$varselType",
       "eventId": "$eventId",
       "appnavn": "$appnavn",
@@ -35,13 +37,15 @@ fun varselAktivertPacket(
 
 @Language("JSON")
 internal fun varselInaktivertPacket(
-    varselType: String,
-    eventId: String,
-    namespace: String,
-    appnavn: String,
+    varselType: String = "beskjed",
+    eventId: String = "123",
+    namespace: String = "namespace",
+    appnavn: String = "appnavn",
+    source: String? = null
 ) = """
     {
       "@event_name": "inaktivert",
+      ${if (source != null) "\"@source\":\"$source\"," else ""}
       "varselType": "$varselType",
       "eventId": "$eventId",
       "namespace": "$namespace",

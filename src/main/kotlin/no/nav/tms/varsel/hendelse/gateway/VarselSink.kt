@@ -16,6 +16,7 @@ class VarselSink(
     init {
         River(rapidsConnection).apply {
             validate { it.demandAny("@event_name", listOf("aktivert", "inaktivert")) }
+            validate { it.forbidValues("@source", listOf("varsel-authority")) }
             validate {
                 it.requireKey("varselType")
                 it.requireKey("eventId")

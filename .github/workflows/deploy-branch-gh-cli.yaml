@@ -1,11 +1,12 @@
-name: Deploy revision
+name: Deploy branch
 
 on:
-  repository_dispatch:
-    types: deploy-revision
-
-env:
-  COMMIT_SHA: ${{ github.event.client_payload.commit }}
+  workflow_dispatch:
+    inputs:
+      cluster:
+        description: 'Det clusteret branchen skal deployes til'
+        required: true
+        type: string
 
 permissions:
   packages: write
@@ -20,8 +21,6 @@ jobs:
 
       - name: 'Sjekk ut ønsket commit'
         uses: 'actions/checkout@v3'
-        with:
-          ref: ${{ env.COMMIT_SHA }}
 
       - name: 'Utled navn på docker-image basert på siste commit'
         run: |
@@ -43,8 +42,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          ref: ${{ env.COMMIT_SHA }}
 
       - name: 'Setup java'
         uses: actions/setup-java@v1
@@ -81,20 +78,15 @@ jobs:
     if: |
       always() &&
       ( needs.build-docker-image.result == 'success' || needs.build-docker-image.result == 'skipped' )
-    strategy:
-      matrix:
-        cluster: ${{ github.event.client_payload.clusters }}
     steps:
       - uses: actions/checkout@v3
-        with:
-          ref: ${{ env.COMMIT_SHA }}
 
-      - name: 'Deployer til ${{ matrix.CLUSTER }}'
+      - name: 'Deployer ${{ github.ref_name }} til ${{ inputs.cluster }}'
         uses: 'nais/deploy/actions/deploy@v1'
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: ${{ matrix.CLUSTER }}
-          RESOURCE: ./nais/${{ matrix.CLUSTER }}/nais.yaml
+          CLUSTER: ${{ inputs.cluster }}
+          RESOURCE: ./nais/${{ inputs.cluster }}/nais.yaml
           VAR: version=${{ needs.setup.outputs.docker_image }}
           PRINT_PAYLOAD: true
-          REF: ${{ env.COMMIT_SHA }}
+          REF: ${{ github.sha }}

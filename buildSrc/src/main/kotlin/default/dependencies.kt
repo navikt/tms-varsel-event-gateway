@@ -14,98 +14,23 @@ interface DependencyGroup {
     }
 }
 
-interface Auth0Defaults: DependencyGroup {
-    override val groupId get() = "com.auth0"
-    override val version get() = "3.11.0"
-
-    val javajwt get() = dependency("java-jwt")
-}
-
-interface AvroDefaults: DependencyGroup {
-    override val groupId get() = "io.confluent"
-    override val version get() = "6.2.1"
-
-    val avroSerializer get() = dependency("kafka-avro-serializer")
-    val schemaRegistry get() = dependency("kafka-schema-registry")
-}
-
-interface AwaitilityDefaults: DependencyGroup {
-    override val groupId get() = "org.awaitility"
-    override val version get() = "4.0.3"
-
-    val awaitilityKotlin get() = dependency("awaitility-kotlin")
-}
-
-interface BouncycastleDefaults: DependencyGroup {
-    override val groupId get() = "org.bouncycastle"
-    override val version get() = "1.66"
-
-    val bcprovJdk15on get() = dependency("bcprov-jdk15on")
-}
-
-interface BrukernotifikasjonDefaults: DependencyGroup {
-    override val groupId get() = "com.github.navikt"
-    override val version get() = "1.2022.06.10-12.30-e99cac7ce3e2"
-
-    val schemas get() = dependency("brukernotifikasjon-schemas")
-}
-
-interface DoknotifikasjonDefaults: DependencyGroup {
-    override val groupId get() = "com.github.navikt"
-    override val version get() = "1.2020.11.16-09.27-d037b30bb0ea"
-
-    val schemas get() = dependency("doknotifikasjon-schemas")
-}
-
-interface DittNAVCommonLibDefaults: DependencyGroup {
-    override val version get() = "2022.09.30-12.41-aa46d2d75788"
-    override val groupId get() = "com.github.navikt.dittnav-common-lib"
-
-    val influxdb get() = dependency("dittnav-common-influxdb")
-    val utils get() = dependency("dittnav-common-utils")
-}
-
 interface FlywayDefaults: DependencyGroup {
     override val groupId get() = "org.flywaydb"
-    override val version get() = "6.5.7"
+    override val version get() = "9.21.1"
 
     val pluginId get() = "org.flywaydb.flyway"
     val core get() = dependency("flyway-core")
 }
 
-interface GraphQLDefaults: DependencyGroup {
-    override val groupId get() = "com.expediagroup"
-    override val version get() = "5.3.2"
-
-    val pluginId get() = "com.expediagroup.graphql"
-
-    val kotlinClient get() = dependency("graphql-kotlin-client")
-    val kotlinKtorClient get() = dependency("graphql-kotlin-ktor-client")
-}
-
-interface H2DatabaseDefaults: DependencyGroup {
-    override val groupId get() = "com.h2database"
-    override val version get() = "2.0.206"
-
-    val h2 get() = dependency("h2")
-}
-
 interface HikariDefaults: DependencyGroup {
     override val groupId get() = "com.zaxxer"
-    override val version get() = "3.4.5"
+    override val version get() = "5.0.1"
 
     val cp get() = dependency("HikariCP")
 }
 
-interface InfluxdbDefaults: DependencyGroup {
-    override val groupId get() = "org.influxdb"
-    override val version get() = "2.20"
-
-    val java get() = dependency("influxdb-java")
-}
-
 interface JacksonDatatypeDefaults: DependencyGroup {
-    override val version get() = "2.11.3"
+    override val version get() = "2.15.1"
 
     val datatypeJsr310 get() = dependency("jackson-datatype-jsr310", groupId = "com.fasterxml.jackson.datatype")
     val moduleKotlin get() = dependency("jackson-module-kotlin", groupId = "com.fasterxml.jackson.module")
@@ -113,7 +38,7 @@ interface JacksonDatatypeDefaults: DependencyGroup {
 
 interface JunitDefaults: DependencyGroup {
     override val groupId get() = "org.junit.jupiter"
-    override val version get() = "5.4.1"
+    override val version get() = "5.10.0"
 
     val api get() = dependency("junit-jupiter-api")
     val engine get() = dependency("junit-jupiter-engine")
@@ -122,7 +47,7 @@ interface JunitDefaults: DependencyGroup {
 
 interface JjwtDefaults: DependencyGroup {
     override val groupId get() = "io.jsonwebtoken"
-    override val version get() = "0.11.2"
+    override val version get() = "0.11.5"
 
     val api get() = dependency("jjwt-api")
     val impl get() = dependency("jjwt-impl")
@@ -132,7 +57,7 @@ interface JjwtDefaults: DependencyGroup {
 
 interface KafkaDefaults: DependencyGroup {
     override val groupId get() = "org.apache.kafka"
-    override val version get() = "2.5.1"
+    override val version get() = "3.5.0"
 
     val clients get() = dependency("kafka-clients")
     val kafka_2_12 get() = dependency("kafka_2.12")
@@ -141,14 +66,14 @@ interface KafkaDefaults: DependencyGroup {
 
 interface KluentDefaults: DependencyGroup {
     override val groupId get() = "org.amshove.kluent"
-    override val version get() = "1.68"
+    override val version get() = "1.72"
 
     val kluent get() = dependency("kluent")
 }
 
 interface KotestDefaults: DependencyGroup {
     override val groupId get() = "io.kotest"
-    override val version get() = "4.3.1"
+    override val version get() = "5.6.1"
 
     val runnerJunit5 get() = dependency("kotest-runner-junit5")
     val assertionsCore get() = dependency("kotest-assertions-core")
@@ -157,14 +82,14 @@ interface KotestDefaults: DependencyGroup {
 
 interface KotlinDefaults: DependencyGroup {
     override val groupId get() = "org.jetbrains.kotlin"
-    override val version get() = "1.6.10"
+    override val version get() = "1.9.0"
 
     val reflect get() = dependency("kotlin-reflect")
 }
 
 interface KotlinLoggingDefaults: DependencyGroup {
-    override val groupId get() = "io.github.microutils"
-    override val version get() = "3.0.0"
+    override val groupId get() = "io.github.oshai"
+    override val version get() = "5.0.2"
 
     val logging get() = dependency("kotlin-logging")
 }
@@ -172,10 +97,7 @@ interface KotlinLoggingDefaults: DependencyGroup {
 interface KotlinxDefaults: DependencyGroup {
     override val groupId get() = "org.jetbrains.kotlinx"
 
-    val coroutines get() = dependency("kotlinx-coroutines-core", version = "1.3.9")
-    val htmlJvm get() = dependency("kotlinx-html-jvm", version = "0.7.3")
-    val atomicfu get() = dependency("atomicfu", version = "0.14.4")
-    val datetime get() = dependency("kotlinx-datetime", version = "0.3.2")
+    val coroutines get() = dependency("kotlinx-coroutines-core", version = "1.7.3")
 }
 
 interface KotliQueryDefaults: DependencyGroup {
@@ -185,35 +107,13 @@ interface KotliQueryDefaults: DependencyGroup {
     val kotliquery get() = dependency("kotliquery")
 }
 
-interface KtorDefaults: DependencyGroup {
-    override val version get() = "1.6.7"
-    override val groupId get() = "io.ktor"
-
-    val auth get() = dependency("ktor-auth")
-    val authJwt get() = dependency("ktor-auth-jwt")
-    val htmlBuilder get() = dependency("ktor-html-builder")
-    val jackson get() = dependency("ktor-jackson")
-    val serverNetty get() = dependency("ktor-server-netty")
-    val clientApache get() = dependency("ktor-client-apache")
-    val clientJson get() = dependency("ktor-client-json")
-    val clientSerializationJvm get() = dependency("ktor-client-serialization-jvm")
-    val clientJackson get() = dependency("ktor-client-jackson")
-    val clientLogging get() = dependency("ktor-client-logging")
-    val clientLoggingJvm get() = dependency("ktor-client-logging-jvm")
-    val clientMock get() = dependency("ktor-client-mock")
-    val clientMockJvm get() = dependency("ktor-client-mock-jvm")
-    val metricsMicrometer get() = dependency("ktor-metrics-micrometer")
-    val serverTestHost get() = dependency("ktor-server-test-host")
-    val serialization get() = dependency("ktor-serialization")
-}
-
-object Ktor2Defaults {
-    val version get() = "2.1.1"
+object KtorDefaults {
+    val version get() = "2.3.5"
     val groupId get() = "io.ktor"
 
     interface ServerDefaults: DependencyGroup {
-        override val groupId get() = Ktor2Defaults.groupId
-        override val version get() = Ktor2Defaults.version
+        override val groupId get() = KtorDefaults.groupId
+        override val version get() = KtorDefaults.version
 
         val core get() = dependency("ktor-server-core")
         val netty get() = dependency("ktor-server-netty")
@@ -228,8 +128,8 @@ object Ktor2Defaults {
     }
 
     interface ClientDefaults: DependencyGroup {
-        override val groupId get() = Ktor2Defaults.groupId
-        override val version get() = Ktor2Defaults.version
+        override val groupId get() = KtorDefaults.groupId
+        override val version get() = KtorDefaults.version
 
         val core get() = dependency("ktor-client-core")
         val apache get() = dependency("ktor-client-apache")
@@ -237,66 +137,52 @@ object Ktor2Defaults {
     }
 
     interface SerializationDefaults: DependencyGroup {
-        override val groupId get() = Ktor2Defaults.groupId
-        override val version get() = Ktor2Defaults.version
+        override val groupId get() = KtorDefaults.groupId
+        override val version get() = KtorDefaults.version
 
         val kotlinX get() = dependency("ktor-serialization-kotlinx-json")
         val jackson get() = dependency("ktor-serialization-jackson")
     }
 
     interface TestDefaults: DependencyGroup {
-        override val groupId get() = Ktor2Defaults.groupId
-        override val version get() = Ktor2Defaults.version
+        override val groupId get() = KtorDefaults.groupId
+        override val version get() = KtorDefaults.version
 
         val clientMock get() = dependency("ktor-client-mock")
         val serverTestHost get() = dependency("ktor-server-test-host")
     }
 }
 
-interface LogbackDefaults: DependencyGroup {
-    override val groupId get() = "ch.qos.logback"
-    override val version get() = "1.4.1"
-
-    val classic get() = dependency("logback-classic")
-}
-
 interface LogstashDefaults: DependencyGroup {
     override val groupId get() = "net.logstash.logback"
-    override val version get() = "6.4"
+    override val version get() = "7.4"
 
     val logbackEncoder get() = dependency("logstash-logback-encoder")
 }
 
 interface MicrometerDefaults: DependencyGroup {
     override val groupId get() = "io.micrometer"
-    override val version get() = "1.7.0"
+    override val version get() = "1.11.2"
 
     val registryPrometheus get() = dependency("micrometer-registry-prometheus")
 }
 
 interface MockkDefaults: DependencyGroup {
     override val groupId get() = "io.mockk"
-    override val version get() = "1.12.2"
+    override val version get() = "1.13.5"
 
     val mockk get() = dependency("mockk")
 }
 
-interface NAVDefaults {
-    val vaultJdbc get() = "no.nav:vault-jdbc:1.3.7"
-    val kafkaEmbedded get() = "no.nav:kafka-embedded-env:2.8.1"
-    val tokenValidatorKtor get() = "no.nav.security:token-validation-ktor:1.3.10"
-    val tokenValidatorKtor2 get() = "no.nav.security:token-validation-ktor-v2:2.1.4"
-}
-
 interface PostgresqlDefaults: DependencyGroup {
     override val groupId get() = "org.postgresql"
-    override val version get() = "42.4.1"
+    override val version get() = "42.6.0"
 
     val postgresql get() = dependency("postgresql")
 }
 
 interface PrometheusDefaults: DependencyGroup {
-    override val version get() = "0.9.0"
+    override val version get() = "0.16.0"
     override val groupId get() = "io.prometheus"
 
     val common get() = dependency("simpleclient_common")
@@ -308,7 +194,7 @@ interface PrometheusDefaults: DependencyGroup {
 
 interface RapidsAndRiversDefaults: DependencyGroup {
     override val groupId get() = "com.github.navikt"
-    override val version get() = "2022100711511665136276.49acbaae4ed4"
+    override val version get() = "2023101613431697456627.0cdd93eb696f"
 
     val rapidsAndRivers get() = dependency("rapids-and-rivers")
 }
@@ -319,15 +205,8 @@ interface ShadowDefaults: DependencyGroup {
     val pluginId get() = "com.github.johnrengelman.shadow"
 }
 
-interface SulkyUlidDefaults: DependencyGroup {
-    override val version get() = "8.2.0"
-    override val groupId get() = "de.huxhorn.sulky"
-
-    val sulkyUlid get() = dependency("de.huxhorn.sulky.ulid")
-}
-
 interface TestContainersDefaults: DependencyGroup {
-    override val version get() = "1.16.2"
+    override val version get() = "1.18.3"
     override val groupId get() = "org.testcontainers"
 
     val junitJupiter get() = dependency("junit-jupiter")
@@ -335,26 +214,25 @@ interface TestContainersDefaults: DependencyGroup {
     val postgresql get() = dependency("postgresql")
 }
 
-interface TmsKtorTokenSupportDefaults: DependencyGroup {
-    override val groupId get() = "com.github.navikt.tms-ktor-token-support"
+interface TmsCommonLibDefaults: DependencyGroup {
+    override val groupId get() = "no.nav.tms.common"
     override val version get() = "2.0.0"
 
-    val authenticationInstaller get() = dependency("token-support-authentication-installer")
-    val azureExchange get() = dependency("token-support-azure-exchange")
-    val azureValidation get() = dependency("token-support-azure-validation")
-    val tokenXValidation get() = dependency("token-support-tokenx-validation")
-    val authenticationInstallerMock get() = dependency("token-support-authentication-installer-mock")
-    val tokenXValidationMock get() = dependency("token-support-tokenx-validation-mock")
-    val azureValidationMock get() = dependency("token-support-azure-validation-mock")
-    val tokendingsExchange get() = dependency("token-support-tokendings-exchange")
-    val idportenSidecar get() = dependency("token-support-idporten-sidecar")
-    val idportenSidecarMock get() = dependency("token-support-idporten-sidecar-mock")
+    val metrics get() = dependency("metrics")
+    val observability get() = dependency("observability")
+    val utils get() = dependency("utils")
 }
 
-interface UnleashDefaults: DependencyGroup {
-    override val version get() = "3.3.1"
-    override val groupId get() = "no.finn.unleash"
+interface TmsKtorTokenSupportDefaults: DependencyGroup {
+    override val groupId get() = "no.nav.tms.token.support"
+    override val version get() = "4.0.0"
 
-    val clientJava get() = dependency("unleash-client-java")
+    val azureExchange get() = dependency("azure-exchange")
+    val azureValidation get() = dependency("azure-validation")
+    val tokenXValidation get() = dependency("tokenx-validation")
+    val tokenXValidationMock get() = dependency("tokenx-validation-mock")
+    val azureValidationMock get() = dependency("azure-validation-mock")
+    val tokendingsExchange get() = dependency("tokendings-exchange")
+    val idportenSidecar get() = dependency("idporten-sidecar")
+    val idportenSidecarMock get() = dependency("idporten-sidecar-mock")
 }
-

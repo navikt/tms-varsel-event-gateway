@@ -15,19 +15,25 @@ tasks.withType<KotlinCompile> {
 }
 
 repositories {
-    maven("https://jitpack.io")
     mavenCentral()
+    maven("https://maven.pkg.github.com/navikt/*") {
+        credentials {
+            username = System.getenv("GITHUB_ACTOR")?: "x-access-token"
+            password = System.getenv("GITHUB_TOKEN")?: project.findProperty("githubPassword") as String
+        }
+    }
     mavenLocal()
 }
 
 dependencies {
-    implementation(DittNAVCommonLib.utils)
     implementation(KotlinLogging.logging)
-    implementation(Ktor2.Serialization.jackson)
-    implementation(Ktor2.Serialization.kotlinX)
+    implementation(Ktor.Serialization.jackson)
+    implementation(Ktor.Serialization.kotlinX)
     implementation(Prometheus.common)
     implementation(Prometheus.hotspot)
     implementation(RapidsAndRivers.rapidsAndRivers)
+    implementation(TmsCommonLib.utils)
+
 
     testImplementation(Junit.api)
     testImplementation(Junit.engine)

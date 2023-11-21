@@ -4,6 +4,7 @@ data class VarselHendelse(
     val hendelseType: String,
     val varselType: String,
     val eventId: String,
+    val cluster: String?,
     val namespace: String,
     val appnavn: String
 ) {
@@ -12,6 +13,7 @@ data class VarselHendelse(
             "@event_name": "$hendelseType",
             "varselType": "$varselType",
             "eventId": "$eventId",
+            ${cluster?.let { "\"cluster\": \"$it\"," }?: "" }
             "namespace": "$namespace",
             "appnavn": "$appnavn"
         }

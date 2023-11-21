@@ -14,11 +14,10 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import java.util.*
 
-internal class VarselSinkTest {
+internal class VarselAktivertSinkTest {
 
     private val hendelseTopic = "hendelseTopic"
     private val testRapid = TestRapid()
-    private val testFnr = "12345678910"
 
     private val mockProducer = MockProducer(
         false,
@@ -35,7 +34,7 @@ internal class VarselSinkTest {
 
     @BeforeAll
     fun setup() {
-        VarselSink(testRapid, hendelseProducer)
+        VarselAktivertSink(testRapid, hendelseProducer)
     }
 
     @AfterEach
@@ -63,68 +62,31 @@ internal class VarselSinkTest {
         hendelseJson["eventId"].textValue() shouldBe eventId
         hendelseJson["namespace"].textValue() shouldBe namespace
         hendelseJson["appnavn"].textValue() shouldBe appnavn
+        hendelseJson["cluster"] shouldBe null
     }
 
     @ParameterizedTest
     @ValueSource(strings = ["beskjed", "oppgave", "innboks"])
-    fun `plukker opp interne inaktivert-eventer og publiserer eksternt`(varselType: String) {
+    fun `fanger opp cluster hvis det er spesifisert`(varselType: String) {
         val eventId = randomUUID()
         val appnavn = "produsent_app"
         val namespace = "produsent_namespace"
+        val cluster = "produsent_cluster"
 
-        val varselInaktivert = varselInaktivertPacket(varselType, eventId, namespace, appnavn)
+        val varselAktivert = varselAktivertPacket(varselType, eventId, namespace, appnavn, cluster)
 
-        testRapid.sendTestMessage(varselInaktivert)
+        testRapid.sendTestMessage(varselAktivert)
 
         val hendelse = mockProducer.history().first().value()
 
         val hendelseJson = objectMapper.readTree(hendelse)
 
-        hendelseJson["@event_name"].textValue() shouldBe "inaktivert"
+        hendelseJson["@event_name"].textValue() shouldBe "aktivert"
         hendelseJson["varselType"].textValue() shouldBe varselType
         hendelseJson["eventId"].textValue() shouldBe eventId
         hendelseJson["namespace"].textValue() shouldBe namespace
         hendelseJson["appnavn"].textValue() shouldBe appnavn
-    }
-
-    @Test
-    fun `ignorerer aktivert-eventer fra tms-varsel-authority`() {
-        val aggregatorAktivertGammel = varselAktivertPacket(eventId = "e1", source = null)
-        val aggregatorAktivertNy = varselAktivertPacket(eventId = "e2", source = "aggregator")
-        val varselAuthorityAktivert = varselAktivertPacket(eventId = "e3", source = "varsel-authority")
-
-        testRapid.sendTestMessage(aggregatorAktivertGammel)
-        testRapid.sendTestMessage(aggregatorAktivertNy)
-        testRapid.sendTestMessage(varselAuthorityAktivert)
-
-        mockProducer.history().size shouldBe 2
-        mockProducer.history()
-            .map { objectMapper.readTree(it.value()) }
-            .map { it["eventId"].asText() }
-            .forEach { eventId ->
-                eventId shouldBeIn listOf("e1", "e2")
-                eventId shouldNotBe "e3"
-            }
-    }
-
-    @Test
-    fun `ignorerer inaktivert-eventer fra tms-varsel-authority`() {
-        val aggregatorInaktivertGammel = varselInaktivertPacket(eventId = "e1", source = null)
-        val aggregatorInaktivertNy = varselInaktivertPacket(eventId = "e2", source = "aggregator")
-        val varselAuthorityInaktivert = varselInaktivertPacket(eventId = "e3", source = "varsel-authority")
-
-        testRapid.sendTestMessage(aggregatorInaktivertGammel)
-        testRapid.sendTestMessage(aggregatorInaktivertNy)
-        testRapid.sendTestMessage(varselAuthorityInaktivert)
-
-        mockProducer.history().size shouldBe 2
-        mockProducer.history()
-            .map { objectMapper.readTree(it.value()) }
-            .map { it["eventId"].asText() }
-            .forEach { eventId ->
-                eventId shouldBeIn listOf("e1", "e2")
-                eventId shouldNotBe "e3"
-            }
+        hendelseJson["cluster"].textValue() shouldBe cluster
     }
 
     private fun randomUUID() = UUID.randomUUID().toString()

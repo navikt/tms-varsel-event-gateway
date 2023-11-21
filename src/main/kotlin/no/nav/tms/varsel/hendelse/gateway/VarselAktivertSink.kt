@@ -1,13 +1,11 @@
 package no.nav.tms.varsel.hendelse.gateway
 
-import mu.KotlinLogging
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
-import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 
-class VarselSink(
+class VarselAktivertSink(
     rapidsConnection: RapidsConnection,
     private val hendelseProducer: HendelseProducer
 ) :
@@ -15,13 +13,11 @@ class VarselSink(
 
     init {
         River(rapidsConnection).apply {
-            validate { it.demandAny("@event_name", listOf("aktivert", "inaktivert")) }
-            validate { it.rejectValue("@source", "varsel-authority") }
+            validate { it.demandValue("@event_name", "aktivert") }
             validate {
-                it.requireKey("varselType")
-                it.requireKey("eventId")
-                it.requireKey("namespace")
-                it.requireKey("appnavn")
+                it.requireKey("type")
+                it.requireKey("varselId")
+                it.requireKey("produsent")
             }
         }.register(this)
     }
@@ -29,10 +25,11 @@ class VarselSink(
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val hendelse = VarselHendelse(
             hendelseType = packet["@event_name"].textValue(),
-            varselType = packet["varselType"].textValue().lowercase(),
-            eventId = packet["eventId"].textValue(),
-            namespace = packet["namespace"].textValue(),
-            appnavn = packet["appnavn"].textValue(),
+            varselType = packet["type"].textValue(),
+            eventId = packet["varselId"].textValue(),
+            cluster = packet["produsent"]["cluster"]?.textValue(),
+            namespace = packet["produsent"]["namespace"].textValue(),
+            appnavn = packet["produsent"]["appnavn"].textValue(),
         )
 
         hendelseProducer.sendVarselHendelse(hendelse)

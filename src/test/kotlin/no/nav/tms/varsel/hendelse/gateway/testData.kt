@@ -1,54 +1,62 @@
 package no.nav.tms.varsel.hendelse.gateway
 
 import org.intellij.lang.annotations.Language
+import java.time.ZonedDateTime
 
 @Language("JSON")
 fun varselAktivertPacket(
     varselType: String = "beskjed",
-    eventId: String = "123",
+    varselId: String = "123",
     namespace: String = "namespace",
     appnavn: String = "appnavn",
-    source: String? = null
+    cluster: String? = null
 ) = """
     {
+      "type": "$varselType",
+      "varselId": "$varselId",
+      "ident": "0123456790",
+      "sensitivitet": "substantial",
+      "innhold": {
+        "tekst": "Dette er en tekst",
+        "link": "https://link",
+        "tekster": []
+      },
+      "produsent": {
+        "cluster": ${cluster?.let { "\"$it\"" } ?: "null" },
+        "namespace": "$namespace",
+        "appnavn": "$appnavn"
+      },
+      "eksternVarslingBestilling": {
+        "prefererteKanaler": [
+          "SMS"
+        ],
+        "smsVarslingstekst": null,
+        "epostVarslingstittel": null,
+        "epostVarslingstekst": null
+      },
+      "opprettet": "${ZonedDateTime.now()}",
+      "aktivFremTil": null,
+      "tidspunkt": "${ZonedDateTime.now()}",
       "@event_name": "aktivert",
-      ${if (source != null) "\"@source\":\"$source\"," else ""}
-      "varselType": "$varselType",
-      "eventId": "$eventId",
-      "appnavn": "$appnavn",
-      "systembruker": "N/A",
-      "namespace": "$namespace",
-      "eventTidspunkt": "${LocalDateTimeHelper.nowAtUtc()}",
-      "forstBehandlet": "${LocalDateTimeHelper.nowAtUtc()}",
-      "fodselsnummer": "01234567890",
-      "grupperingsId": "N/A",
-      "tekst": "Tekst",
-      "link": "http://link",
-      "sikkerhetsnivaa": 3,
-      "sistOppdatert": "${LocalDateTimeHelper.nowAtUtc()}",
-      "aktiv": true,
-      "eksternVarsling": true,
-      "prefererteKanaler": [ "SMS", "EPOST" ],
-      "smsVarslingstekst": null,
-      "epostVarslingstekst": null,
-      "epostVarslingstittel": null
+      "@source": "varsel-authority"
     }
 """.trimIndent()
 
 @Language("JSON")
 internal fun varselInaktivertPacket(
     varselType: String = "beskjed",
-    eventId: String = "123",
+    varselId: String = "123",
     namespace: String = "namespace",
-    appnavn: String = "appnavn",
-    source: String? = null
+    appnavn: String = "appnavn"
 ) = """
-    {
-      "@event_name": "inaktivert",
-      ${if (source != null) "\"@source\":\"$source\"," else ""}
-      "varselType": "$varselType",
-      "eventId": "$eventId",
-      "namespace": "$namespace",
-      "appnavn": "$appnavn"
-    }
+{
+  "varselId": "$varselId",
+  "varselType": "$varselType",
+  "namespace": "$namespace",
+  "appnavn": "$appnavn",
+  "kilde": "produsent",
+  "tidspunkt": "${ZonedDateTime.now()}",
+  "@event_name": "inaktivert",
+  "@source": "varsel-authority"
+}
 """.trimIndent()

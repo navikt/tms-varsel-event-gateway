@@ -37,8 +37,7 @@ fun varselAktivertPacket(
       "opprettet": "${ZonedDateTime.now()}",
       "aktivFremTil": null,
       "tidspunkt": "${ZonedDateTime.now()}",
-      "@event_name": "aktivert",
-      "@source": "varsel-authority"
+      "@event_name": "opprettet"
     }
 """.trimIndent()
 
@@ -46,17 +45,20 @@ fun varselAktivertPacket(
 internal fun varselInaktivertPacket(
     varselType: String = "beskjed",
     varselId: String = "123",
+    cluster: String? = null,
     namespace: String = "namespace",
     appnavn: String = "appnavn"
 ) = """
 {
   "varselId": "$varselId",
-  "varselType": "$varselType",
-  "namespace": "$namespace",
-  "appnavn": "$appnavn",
+  "varseltype": "$varselType",
+  "produsent": {
+    "cluster": ${cluster?.let { "\"$it\"" } ?: "null"},
+    "namespace": "$namespace",
+    "appnavn": "$appnavn"
+  },
   "kilde": "produsent",
   "tidspunkt": "${ZonedDateTime.now()}",
-  "@event_name": "inaktivert",
-  "@source": "varsel-authority"
+  "@event_name": "inaktivert"
 }
 """.trimIndent()

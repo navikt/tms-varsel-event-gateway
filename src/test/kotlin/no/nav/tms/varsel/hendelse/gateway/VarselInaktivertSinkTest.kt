@@ -15,7 +15,6 @@ internal class VarselInaktivertSinkTest {
 
     private val hendelseTopic = "hendelseTopic"
     private val testRapid = TestRapid()
-    private val testFnr = "12345678910"
 
     private val mockProducer = MockProducer(
         false,
@@ -46,8 +45,9 @@ internal class VarselInaktivertSinkTest {
         val eventId = randomUUID()
         val appnavn = "produsent_app"
         val namespace = "produsent_namespace"
+        val cluster = "produsent_cluster"
 
-        val varselInaktivert = varselInaktivertPacket(varselType, eventId, namespace, appnavn)
+        val varselInaktivert = varselInaktivertPacket(varselType, eventId, cluster, namespace, appnavn)
 
         testRapid.sendTestMessage(varselInaktivert)
 
@@ -58,6 +58,7 @@ internal class VarselInaktivertSinkTest {
         hendelseJson["@event_name"].textValue() shouldBe "inaktivert"
         hendelseJson["varselType"].textValue() shouldBe varselType
         hendelseJson["eventId"].textValue() shouldBe eventId
+        hendelseJson["cluster"].textValue() shouldBe cluster
         hendelseJson["namespace"].textValue() shouldBe namespace
         hendelseJson["appnavn"].textValue() shouldBe appnavn
     }

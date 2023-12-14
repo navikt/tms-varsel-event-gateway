@@ -54,7 +54,7 @@ internal class VarselAktivertSinkTest {
 
         val hendelseJson = objectMapper.readTree(hendelse)
 
-        hendelseJson["@event_name"].textValue() shouldBe "aktivert"
+        hendelseJson["@event_name"].textValue() shouldBe "opprettet"
         hendelseJson["varselType"].textValue() shouldBe varselType
         hendelseJson["eventId"].textValue() shouldBe eventId
         hendelseJson["namespace"].textValue() shouldBe namespace
@@ -78,7 +78,7 @@ internal class VarselAktivertSinkTest {
 
         val hendelseJson = objectMapper.readTree(hendelse)
 
-        hendelseJson["@event_name"].textValue() shouldBe "aktivert"
+        hendelseJson["@event_name"].textValue() shouldBe "opprettet"
         hendelseJson["varselType"].textValue() shouldBe varselType
         hendelseJson["eventId"].textValue() shouldBe eventId
         hendelseJson["namespace"].textValue() shouldBe namespace

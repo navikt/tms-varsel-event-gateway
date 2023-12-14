@@ -15,10 +15,9 @@ class VarselInaktivertSink(
         River(rapidsConnection).apply {
             validate { it.demandValue("@event_name", "inaktivert") }
             validate {
-                it.requireKey("varselType")
+                it.requireKey("varseltype")
                 it.requireKey("varselId")
-                it.requireKey("namespace")
-                it.requireKey("appnavn")
+                it.requireKey("produsent")
             }
         }.register(this)
     }
@@ -26,11 +25,11 @@ class VarselInaktivertSink(
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val hendelse = VarselHendelse(
             hendelseType = packet["@event_name"].textValue(),
-            varselType = packet["varselType"].textValue(),
+            varselType = packet["varseltype"].textValue(),
             eventId = packet["varselId"].textValue(),
-            cluster = null,
-            namespace = packet["namespace"].textValue(),
-            appnavn = packet["appnavn"].textValue()
+            cluster = packet["produsent"]["cluster"].textValue(),
+            namespace = packet["produsent"]["namespace"].textValue(),
+            appnavn = packet["produsent"]["appnavn"].textValue()
         )
 
         hendelseProducer.sendVarselHendelse(hendelse)

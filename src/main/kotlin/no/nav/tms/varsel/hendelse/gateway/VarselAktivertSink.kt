@@ -13,7 +13,7 @@ class VarselAktivertSink(
 
     init {
         River(rapidsConnection).apply {
-            validate { it.demandValue("@event_name", "aktivert") }
+            validate { it.demandValue("@event_name", "opprettet") }
             validate {
                 it.requireKey("type")
                 it.requireKey("varselId")

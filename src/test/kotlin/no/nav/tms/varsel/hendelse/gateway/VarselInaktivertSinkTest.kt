@@ -63,5 +63,28 @@ internal class VarselInaktivertSinkTest {
         hendelseJson["appnavn"].textValue() shouldBe appnavn
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = ["beskjed", "oppgave", "innboks"])
+    fun `takler null i produsent-cluster`(varselType: String) {
+        val eventId = randomUUID()
+        val appnavn = "produsent_app"
+        val namespace = "produsent_namespace"
+
+        val varselInaktivert = varselInaktivertPacket(varselType, eventId, null, namespace, appnavn)
+
+        testRapid.sendTestMessage(varselInaktivert)
+
+        val hendelse = mockProducer.history().first().value()
+
+        val hendelseJson = objectMapper.readTree(hendelse)
+
+        hendelseJson["@event_name"].textValue() shouldBe "inaktivert"
+        hendelseJson["varselType"].textValue() shouldBe varselType
+        hendelseJson["eventId"].textValue() shouldBe eventId
+        hendelseJson["cluster"] shouldBe null
+        hendelseJson["namespace"].textValue() shouldBe namespace
+        hendelseJson["appnavn"].textValue() shouldBe appnavn
+    }
+
     private fun randomUUID() = UUID.randomUUID().toString()
 }

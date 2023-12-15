@@ -27,7 +27,7 @@ class VarselInaktivertSink(
             hendelseType = packet["@event_name"].textValue(),
             varselType = packet["varseltype"].textValue(),
             eventId = packet["varselId"].textValue(),
-            cluster = packet["produsent"]["cluster"].textValue(),
+            cluster = packet["produsent"]["cluster"]?.textValue(),
             namespace = packet["produsent"]["namespace"].textValue(),
             appnavn = packet["produsent"]["appnavn"].textValue()
         )

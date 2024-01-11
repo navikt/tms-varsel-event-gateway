@@ -22,11 +22,19 @@ private fun startRapid(
     hendelseProducer: HendelseProducer
 ) {
     RapidApplication.Builder(fromEnv(environment.rapidConfig)).build().apply {
-        VarselAktivertSink(
+        VarselOpprettetSink(
             rapidsConnection = this,
             hendelseProducer = hendelseProducer
         )
         VarselInaktivertSink(
+            rapidsConnection = this,
+            hendelseProducer = hendelseProducer
+        )
+        VarselArkivertSink(
+            rapidsConnection = this,
+            hendelseProducer = hendelseProducer
+        )
+        EksternStatusOppdatertSink(
             rapidsConnection = this,
             hendelseProducer = hendelseProducer
         )

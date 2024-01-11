@@ -5,7 +5,7 @@ import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 
-class VarselInaktivertSink(
+class VarselArkivertSink(
     rapidsConnection: RapidsConnection,
     private val hendelseProducer: HendelseProducer
 ) :
@@ -13,10 +13,10 @@ class VarselInaktivertSink(
 
     init {
         River(rapidsConnection).apply {
-            validate { it.demandValue("@event_name", "inaktivert") }
+            validate { it.demandValue("@event_name", "arkivert") }
             validate {
-                it.requireKey("varseltype")
                 it.requireKey("varselId")
+                it.requireKey("varseltype")
                 it.requireKey("produsent")
             }
         }.register(this)
@@ -24,12 +24,12 @@ class VarselInaktivertSink(
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val hendelse = InternStatusHendelse(
-            hendelseType = packet["@event_name"].asText(),
+            hendelseType = "slettet",
             varseltype = packet["varseltype"].asText(),
             varselId = packet["varselId"].asText(),
             cluster = packet["produsent"]["cluster"].asTextOrNull(),
             namespace = packet["produsent"]["namespace"].asText(),
-            appnavn = packet["produsent"]["appnavn"].asText()
+            appnavn = packet["produsent"]["appnavn"].asText(),
         )
 
         hendelseProducer.sendVarselHendelse(hendelse)

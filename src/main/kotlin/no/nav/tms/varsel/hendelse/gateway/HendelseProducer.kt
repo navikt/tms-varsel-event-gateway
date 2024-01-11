@@ -11,7 +11,7 @@ class HendelseProducer(
 
         val hendelseJson = hendelse.toJson()
 
-        val producerRecord = ProducerRecord(topicName, hendelse.eventId, hendelseJson)
+        val producerRecord = ProducerRecord(topicName, hendelse.varselId, hendelseJson)
         kafkaProducer.send(producerRecord)
     }
 }

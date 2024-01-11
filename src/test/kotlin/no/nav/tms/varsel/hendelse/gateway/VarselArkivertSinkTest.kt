@@ -11,7 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import java.util.*
 
-internal class VarselInaktivertSinkTest {
+internal class VarselArkivertSinkTest {
 
     private val hendelseTopic = "hendelseTopic"
     private val testRapid = TestRapid()
@@ -31,7 +31,7 @@ internal class VarselInaktivertSinkTest {
 
     @BeforeAll
     fun setup() {
-        VarselInaktivertSink(testRapid, hendelseProducer)
+        VarselArkivertSink(testRapid, hendelseProducer)
     }
 
     @AfterEach
@@ -41,13 +41,13 @@ internal class VarselInaktivertSinkTest {
 
     @ParameterizedTest
     @ValueSource(strings = ["beskjed", "oppgave", "innboks"])
-    fun `plukker opp interne inaktivert-eventer og publiserer eksternt`(varselType: String) {
-        val eventId = randomUUID()
+    fun `plukker opp interne arkivert-eventer og publiserer eksternt`(varselType: String) {
+        val varselId = randomUUID()
         val appnavn = "produsent_app"
         val namespace = "produsent_namespace"
         val cluster = "produsent_cluster"
 
-        val varselInaktivert = varselInaktivertPacket(varselType, eventId, cluster, namespace, appnavn)
+        val varselInaktivert = varselArkivertPacket(varselType, varselId, cluster, namespace, appnavn)
 
         testRapid.sendTestMessage(varselInaktivert)
 
@@ -55,10 +55,9 @@ internal class VarselInaktivertSinkTest {
 
         val hendelseJson = objectMapper.readTree(hendelse)
 
-        hendelseJson["@event_name"].asText() shouldBe "inaktivert"
+        hendelseJson["@event_name"].asText() shouldBe "slettet"
         hendelseJson["varseltype"].asText() shouldBe varselType
-        hendelseJson["varselType"].asText() shouldBe varselType
-        hendelseJson["eventId"].asText() shouldBe eventId
+        hendelseJson["varselId"].asText() shouldBe varselId
         hendelseJson["cluster"].asText() shouldBe cluster
         hendelseJson["namespace"].asText() shouldBe namespace
         hendelseJson["appnavn"].asText() shouldBe appnavn
@@ -67,11 +66,11 @@ internal class VarselInaktivertSinkTest {
     @ParameterizedTest
     @ValueSource(strings = ["beskjed", "oppgave", "innboks"])
     fun `takler null i produsent-cluster`(varselType: String) {
-        val eventId = randomUUID()
+        val varselId = randomUUID()
         val appnavn = "produsent_app"
         val namespace = "produsent_namespace"
 
-        val varselInaktivert = varselInaktivertPacket(varselType, eventId, null, namespace, appnavn)
+        val varselInaktivert = varselArkivertPacket(varselType, varselId, null, namespace, appnavn)
 
         testRapid.sendTestMessage(varselInaktivert)
 
@@ -79,10 +78,9 @@ internal class VarselInaktivertSinkTest {
 
         val hendelseJson = objectMapper.readTree(hendelse)
 
-        hendelseJson["@event_name"].asText() shouldBe "inaktivert"
+        hendelseJson["@event_name"].asText() shouldBe "slettet"
         hendelseJson["varseltype"].asText() shouldBe varselType
-        hendelseJson["varselType"].asText() shouldBe varselType
-        hendelseJson["eventId"].asText() shouldBe eventId
+        hendelseJson["varselId"].asText() shouldBe varselId
         hendelseJson["cluster"] shouldBe null
         hendelseJson["namespace"].asText() shouldBe namespace
         hendelseJson["appnavn"].asText() shouldBe appnavn

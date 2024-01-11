@@ -11,7 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import java.util.*
 
-internal class VarselInaktivertSinkTest {
+internal class VarselOpprettetSinkTest {
 
     private val hendelseTopic = "hendelseTopic"
     private val testRapid = TestRapid()
@@ -31,7 +31,7 @@ internal class VarselInaktivertSinkTest {
 
     @BeforeAll
     fun setup() {
-        VarselInaktivertSink(testRapid, hendelseProducer)
+        VarselOpprettetSink(testRapid, hendelseProducer)
     }
 
     @AfterEach
@@ -41,23 +41,29 @@ internal class VarselInaktivertSinkTest {
 
     @ParameterizedTest
     @ValueSource(strings = ["beskjed", "oppgave", "innboks"])
-    fun `plukker opp interne inaktivert-eventer og publiserer eksternt`(varselType: String) {
-        val eventId = randomUUID()
-        val appnavn = "produsent_app"
+    fun `plukker opp interne aktivert-eventer og publiserer eksternt`(varseltype: String) {
+        val varselId = randomUUID()
         val namespace = "produsent_namespace"
+        val appnavn = "produsent_app"
 
-        val varselInaktivert = varselInaktivertPacket(varselType, eventId, namespace, appnavn)
+        val varselAktivert = varselOpprettetPacket(
+            varseltype = varseltype,
+            varselId = varselId,
+            namespace = namespace,
+            appnavn = appnavn
+        )
 
-        testRapid.sendTestMessage(varselInaktivert)
+        testRapid.sendTestMessage(varselAktivert)
 
         val hendelse = mockProducer.history().first().value()
 
         val hendelseJson = objectMapper.readTree(hendelse)
 
-        hendelseJson["@event_name"].asText() shouldBe "inaktivert"
-        hendelseJson["varseltype"].asText() shouldBe varselType
-        hendelseJson["varselType"].asText() shouldBe varselType
-        hendelseJson["eventId"].asText() shouldBe eventId
+        hendelseJson["@event_name"].asText() shouldBe "opprettet"
+        hendelseJson["varseltype"].asText() shouldBe varseltype
+        hendelseJson["varselType"].asText() shouldBe varseltype
+        hendelseJson["varselId"].asText() shouldBe varselId
+        hendelseJson["eventId"].asText() shouldBe varselId
         hendelseJson["namespace"].asText() shouldBe namespace
         hendelseJson["appnavn"].asText() shouldBe appnavn
     }

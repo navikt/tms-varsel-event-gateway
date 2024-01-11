@@ -21,10 +21,12 @@ object PrometheusMetricsCollector {
             .register()
 
     fun countVarselHendelse(hendelse: VarselHendelse) {
-        when (hendelse.hendelseType) {
-            "aktivert" -> VARSEL_AKTIVERT.labels(hendelse.varselType, hendelse.appnavn).inc()
-            "inaktivert" -> VARSEL_INAKTIVERT.labels(hendelse.varselType, hendelse.appnavn).inc()
-            else -> {}
+        when (hendelse) {
+            is InternStatusHendelse -> when (hendelse.hendelseType) {
+                "aktivert" -> VARSEL_AKTIVERT.labels(hendelse.varseltype, hendelse.appnavn).inc()
+                "inaktivert" -> VARSEL_INAKTIVERT.labels(hendelse.varseltype, hendelse.appnavn).inc()
+            }
+            is EksternStatusHendelse -> {}
         }
     }
 }

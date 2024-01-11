@@ -4,15 +4,14 @@ import org.intellij.lang.annotations.Language
 import java.time.ZonedDateTime
 
 @Language("JSON")
-fun varselAktivertPacket(
-    varselType: String = "beskjed",
+fun varselOpprettetPacket(
+    varseltype: String = "beskjed",
     varselId: String = "123",
     namespace: String = "namespace",
-    appnavn: String = "appnavn",
-    cluster: String? = null
+    appnavn: String = "appnavn"
 ) = """
     {
-      "type": "$varselType",
+      "type": "$varseltype",
       "varselId": "$varselId",
       "ident": "0123456790",
       "sensitivitet": "substantial",
@@ -22,7 +21,7 @@ fun varselAktivertPacket(
         "tekster": []
       },
       "produsent": {
-        "cluster": ${cluster?.let { "\"$it\"" } ?: "null" },
+        "cluster": "cluster",
         "namespace": "$namespace",
         "appnavn": "$appnavn"
       },
@@ -43,22 +42,72 @@ fun varselAktivertPacket(
 
 @Language("JSON")
 internal fun varselInaktivertPacket(
-    varselType: String = "beskjed",
+    varseltype: String = "beskjed",
     varselId: String = "123",
-    cluster: String? = null,
     namespace: String = "namespace",
     appnavn: String = "appnavn"
 ) = """
 {
   "varselId": "$varselId",
-  "varseltype": "$varselType",
+  "varseltype": "$varseltype",
   "produsent": {
-    "cluster": ${cluster?.let { "\"$it\"" } ?: "null"},
+    "cluster": "cluster",
     "namespace": "$namespace",
     "appnavn": "$appnavn"
   },
   "kilde": "produsent",
   "tidspunkt": "${ZonedDateTime.now()}",
   "@event_name": "inaktivert"
+}
+""".trimIndent()
+
+@Language("JSON")
+internal fun varselArkivertPacket(
+    varseltype: String = "beskjed",
+    varselId: String = "123",
+    namespace: String = "namespace",
+    appnavn: String = "appnavn"
+) = """
+{
+  "varselId": "$varselId",
+  "varseltype": "$varseltype",
+  "produsent": {
+    "cluster": "cluster",
+    "namespace": "$namespace",
+    "appnavn": "$appnavn"
+  },
+  "opprettet": "${ZonedDateTime.now().minusYears(1)}",
+  "tidspunkt": "${ZonedDateTime.now()}",
+  "@event_name": "arkivert"
+}
+""".trimIndent()
+
+@Language("JSON")
+internal fun eksternStatusOppdatertPacket(
+    status: String = "sendt",
+    varselId: String = "123",
+    ident: String = "12345678901",
+    varseltype: String = "beskjed",
+    kanal: String? = "SMS",
+    renotifikasjon: Boolean? = false,
+    feilmelding: String? = "Ekstern feil",
+    namespace: String = "namespace",
+    appnavn: String = "appnavn"
+) = """
+{
+  "status": "$status",
+  "varselId": "$varselId",
+  "ident": "$ident",
+  "varseltype": "$varseltype",
+  "produsent": {
+    "cluster": "cluster",
+    "namespace": "$namespace",
+    "appnavn": "$appnavn"
+  },
+  "renotifikasjon": ${renotifikasjon?.let { "$it" } ?: "null"},
+  "feilmelding": ${feilmelding?.let { "\"$it\"" } ?: "null"},
+  "kanal": ${kanal?.let { "\"$it\"" } ?: "null"},
+  "tidspunkt": "${ZonedDateTime.now()}",
+  "@event_name": "eksternStatusOppdatert"
 }
 """.trimIndent()

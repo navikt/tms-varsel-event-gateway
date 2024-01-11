@@ -5,7 +5,7 @@ import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 
-class VarselAktivertSink(
+class VarselOpprettetSink(
     rapidsConnection: RapidsConnection,
     private val hendelseProducer: HendelseProducer
 ) :
@@ -23,13 +23,12 @@ class VarselAktivertSink(
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
-        val hendelse = VarselHendelse(
-            hendelseType = packet["@event_name"].textValue(),
-            varselType = packet["type"].textValue(),
-            eventId = packet["varselId"].textValue(),
-            cluster = packet["produsent"]["cluster"]?.textValue(),
-            namespace = packet["produsent"]["namespace"].textValue(),
-            appnavn = packet["produsent"]["appnavn"].textValue(),
+        val hendelse = InternStatusHendelse(
+            hendelseType = packet["@event_name"].asText(),
+            varseltype = packet["type"].asText(),
+            varselId = packet["varselId"].asText(),
+            namespace = packet["produsent"]["namespace"].asText(),
+            appnavn = packet["produsent"]["appnavn"].asText(),
         )
 
         hendelseProducer.sendVarselHendelse(hendelse)

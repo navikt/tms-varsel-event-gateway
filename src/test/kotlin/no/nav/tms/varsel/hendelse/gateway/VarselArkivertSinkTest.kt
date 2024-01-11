@@ -11,7 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import java.util.*
 
-internal class VarselInaktivertSinkTest {
+internal class VarselArkivertSinkTest {
 
     private val hendelseTopic = "hendelseTopic"
     private val testRapid = TestRapid()
@@ -31,7 +31,7 @@ internal class VarselInaktivertSinkTest {
 
     @BeforeAll
     fun setup() {
-        VarselInaktivertSink(testRapid, hendelseProducer)
+        VarselArkivertSink(testRapid, hendelseProducer)
     }
 
     @AfterEach
@@ -41,12 +41,12 @@ internal class VarselInaktivertSinkTest {
 
     @ParameterizedTest
     @ValueSource(strings = ["beskjed", "oppgave", "innboks"])
-    fun `plukker opp interne inaktivert-eventer og publiserer eksternt`(varselType: String) {
-        val eventId = randomUUID()
+    fun `plukker opp interne arkivert-eventer og publiserer eksternt`(varselType: String) {
+        val varselId = randomUUID()
         val appnavn = "produsent_app"
         val namespace = "produsent_namespace"
 
-        val varselInaktivert = varselInaktivertPacket(varselType, eventId, namespace, appnavn)
+        val varselInaktivert = varselArkivertPacket(varselType, varselId, namespace, appnavn)
 
         testRapid.sendTestMessage(varselInaktivert)
 
@@ -54,10 +54,9 @@ internal class VarselInaktivertSinkTest {
 
         val hendelseJson = objectMapper.readTree(hendelse)
 
-        hendelseJson["@event_name"].asText() shouldBe "inaktivert"
+        hendelseJson["@event_name"].asText() shouldBe "slettet"
         hendelseJson["varseltype"].asText() shouldBe varselType
-        hendelseJson["varselType"].asText() shouldBe varselType
-        hendelseJson["eventId"].asText() shouldBe eventId
+        hendelseJson["varselId"].asText() shouldBe varselId
         hendelseJson["namespace"].asText() shouldBe namespace
         hendelseJson["appnavn"].asText() shouldBe appnavn
     }

@@ -27,7 +27,6 @@ class VarselOpprettetSink(
             hendelseType = packet["@event_name"].asText(),
             varseltype = packet["type"].asText(),
             varselId = packet["varselId"].asText(),
-            cluster = packet["produsent"]["cluster"].asTextOrNull(),
             namespace = packet["produsent"]["namespace"].asText(),
             appnavn = packet["produsent"]["appnavn"].asText(),
         )

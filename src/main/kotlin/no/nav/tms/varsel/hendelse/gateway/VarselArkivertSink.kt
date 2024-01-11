@@ -27,7 +27,6 @@ class VarselArkivertSink(
             hendelseType = "slettet",
             varseltype = packet["varseltype"].asText(),
             varselId = packet["varselId"].asText(),
-            cluster = packet["produsent"]["cluster"].asTextOrNull(),
             namespace = packet["produsent"]["namespace"].asText(),
             appnavn = packet["produsent"]["appnavn"].asText(),
         )

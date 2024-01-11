@@ -7,7 +7,6 @@ import java.time.ZonedDateTime
 fun varselOpprettetPacket(
     varseltype: String = "beskjed",
     varselId: String = "123",
-    cluster: String? = "cluster",
     namespace: String = "namespace",
     appnavn: String = "appnavn"
 ) = """
@@ -22,7 +21,7 @@ fun varselOpprettetPacket(
         "tekster": []
       },
       "produsent": {
-        "cluster": ${cluster?.let { "\"$it\"" } ?: "null" },
+        "cluster": "cluster",
         "namespace": "$namespace",
         "appnavn": "$appnavn"
       },
@@ -45,7 +44,6 @@ fun varselOpprettetPacket(
 internal fun varselInaktivertPacket(
     varseltype: String = "beskjed",
     varselId: String = "123",
-    cluster: String? = "cluster",
     namespace: String = "namespace",
     appnavn: String = "appnavn"
 ) = """
@@ -53,7 +51,7 @@ internal fun varselInaktivertPacket(
   "varselId": "$varselId",
   "varseltype": "$varseltype",
   "produsent": {
-    "cluster": ${cluster?.let { "\"$it\"" } ?: "null"},
+    "cluster": "cluster",
     "namespace": "$namespace",
     "appnavn": "$appnavn"
   },
@@ -67,7 +65,6 @@ internal fun varselInaktivertPacket(
 internal fun varselArkivertPacket(
     varseltype: String = "beskjed",
     varselId: String = "123",
-    cluster: String? = "cluster",
     namespace: String = "namespace",
     appnavn: String = "appnavn"
 ) = """
@@ -75,7 +72,7 @@ internal fun varselArkivertPacket(
   "varselId": "$varselId",
   "varseltype": "$varseltype",
   "produsent": {
-    "cluster": ${cluster?.let { "\"$it\"" } ?: "null"},
+    "cluster": "cluster",
     "namespace": "$namespace",
     "appnavn": "$appnavn"
   },
@@ -94,7 +91,6 @@ internal fun eksternStatusOppdatertPacket(
     kanal: String? = "SMS",
     renotifikasjon: Boolean? = false,
     feilmelding: String? = "Ekstern feil",
-    cluster: String? = "cluster",
     namespace: String = "namespace",
     appnavn: String = "appnavn"
 ) = """
@@ -104,7 +100,7 @@ internal fun eksternStatusOppdatertPacket(
   "ident": "$ident",
   "varseltype": "$varseltype",
   "produsent": {
-    "cluster": ${cluster?.let { "\"$it\"" } ?: "null"},
+    "cluster": "cluster",
     "namespace": "$namespace",
     "appnavn": "$appnavn"
   },

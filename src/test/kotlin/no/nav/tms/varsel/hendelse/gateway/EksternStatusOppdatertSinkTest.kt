@@ -48,13 +48,11 @@ internal class EksternStatusOppdatertSinkTest {
         val varselId = randomUUID()
         val appnavn = "produsent_app"
         val namespace = "produsent_namespace"
-        val cluster = "produsent_cluster"
 
         val bestilt = eksternStatusOppdatertPacket(
             status = "bestilt",
             varseltype = varseltype,
             varselId = varselId,
-            cluster = cluster,
             namespace = namespace,
             appnavn = appnavn
         )
@@ -65,7 +63,6 @@ internal class EksternStatusOppdatertSinkTest {
             varseltype = varseltype,
             renotifikasjon = false,
             varselId = varselId,
-            cluster = cluster,
             namespace = namespace,
             appnavn = appnavn
         )
@@ -74,7 +71,6 @@ internal class EksternStatusOppdatertSinkTest {
             status = "ferdigstilt",
             varseltype = varseltype,
             varselId = varselId,
-            cluster = cluster,
             namespace = namespace,
             appnavn = appnavn
         )
@@ -84,7 +80,6 @@ internal class EksternStatusOppdatertSinkTest {
             feilmelding = "Renotifikasjon feilet",
             varseltype = varseltype,
             varselId = varselId,
-            cluster = cluster,
             namespace = namespace,
             appnavn = appnavn
         )
@@ -100,7 +95,6 @@ internal class EksternStatusOppdatertSinkTest {
                 it["@event_name"].asText() shouldBe "eksternStatusOppdatert"
                 it["varseltype"].asText() shouldBe varseltype
                 it["varselId"].asText() shouldBe varselId
-                it["cluster"].asText() shouldBe cluster
                 it["namespace"].asText() shouldBe namespace
                 it["appnavn"].asText() shouldBe appnavn
         }
@@ -116,38 +110,6 @@ internal class EksternStatusOppdatertSinkTest {
         }
 
 
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = ["beskjed", "oppgave", "innboks"])
-    fun `takler null i produsent-cluster`(varseltype: String) {
-        val varselId = randomUUID()
-        val status = "bestilt"
-        val appnavn = "produsent_app"
-        val namespace = "produsent_namespace"
-
-        val bestilt = eksternStatusOppdatertPacket(
-            status = status,
-            varseltype = varseltype,
-            varselId = varselId,
-            cluster = null,
-            namespace = namespace,
-            appnavn = appnavn
-        )
-
-        testRapid.sendTestMessage(bestilt)
-
-        val hendelse = mockProducer.history().first().value()
-
-        val hendelseJson = objectMapper.readTree(hendelse)
-
-        hendelseJson["@event_name"].asText() shouldBe "eksternStatusOppdatert"
-        hendelseJson["status"].asText() shouldBe status
-        hendelseJson["varseltype"].asText() shouldBe varseltype
-        hendelseJson["varselId"].asText() shouldBe varselId
-        hendelseJson["cluster"] shouldBe null
-        hendelseJson["namespace"].asText() shouldBe namespace
-        hendelseJson["appnavn"].asText() shouldBe appnavn
     }
 
     private fun MockProducer<String, String>.findEvent(predicate: (JsonNode) -> Boolean): JsonNode {

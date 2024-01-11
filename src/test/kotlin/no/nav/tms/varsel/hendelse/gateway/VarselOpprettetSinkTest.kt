@@ -43,14 +43,12 @@ internal class VarselOpprettetSinkTest {
     @ValueSource(strings = ["beskjed", "oppgave", "innboks"])
     fun `plukker opp interne aktivert-eventer og publiserer eksternt`(varseltype: String) {
         val varselId = randomUUID()
-        val cluster = "produsent_cluster"
         val namespace = "produsent_namespace"
         val appnavn = "produsent_app"
 
         val varselAktivert = varselOpprettetPacket(
             varseltype = varseltype,
             varselId = varselId,
-            cluster = cluster,
             namespace = namespace,
             appnavn = appnavn
         )
@@ -68,38 +66,6 @@ internal class VarselOpprettetSinkTest {
         hendelseJson["eventId"].asText() shouldBe varselId
         hendelseJson["namespace"].asText() shouldBe namespace
         hendelseJson["appnavn"].asText() shouldBe appnavn
-        hendelseJson["cluster"].asText() shouldBe cluster
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = ["beskjed", "oppgave", "innboks"])
-    fun `takler at produsent-cluster er null`(varselType: String) {
-        val varselId = randomUUID()
-        val appnavn = "produsent_app"
-        val namespace = "produsent_namespace"
-        val cluster = null
-
-        val varselAktivert = varselOpprettetPacket(
-            varseltype = varselType,
-            varselId = varselId,
-            cluster = cluster,
-            namespace = namespace,
-            appnavn = appnavn
-        )
-
-        testRapid.sendTestMessage(varselAktivert)
-
-        val hendelse = mockProducer.history().first().value()
-
-        val hendelseJson = objectMapper.readTree(hendelse)
-
-        hendelseJson["@event_name"].asText() shouldBe "opprettet"
-        hendelseJson["varseltype"].asText() shouldBe varselType
-        hendelseJson["varselId"].asText() shouldBe varselId
-        hendelseJson["eventId"].asText() shouldBe varselId
-        hendelseJson["namespace"].asText() shouldBe namespace
-        hendelseJson["appnavn"].asText() shouldBe appnavn
-        hendelseJson["cluster"] shouldBe cluster
     }
 
     private fun randomUUID() = UUID.randomUUID().toString()

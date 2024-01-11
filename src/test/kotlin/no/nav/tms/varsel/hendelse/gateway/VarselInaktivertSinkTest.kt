@@ -45,33 +45,8 @@ internal class VarselInaktivertSinkTest {
         val eventId = randomUUID()
         val appnavn = "produsent_app"
         val namespace = "produsent_namespace"
-        val cluster = "produsent_cluster"
 
-        val varselInaktivert = varselInaktivertPacket(varselType, eventId, cluster, namespace, appnavn)
-
-        testRapid.sendTestMessage(varselInaktivert)
-
-        val hendelse = mockProducer.history().first().value()
-
-        val hendelseJson = objectMapper.readTree(hendelse)
-
-        hendelseJson["@event_name"].asText() shouldBe "inaktivert"
-        hendelseJson["varseltype"].asText() shouldBe varselType
-        hendelseJson["varselType"].asText() shouldBe varselType
-        hendelseJson["eventId"].asText() shouldBe eventId
-        hendelseJson["cluster"].asText() shouldBe cluster
-        hendelseJson["namespace"].asText() shouldBe namespace
-        hendelseJson["appnavn"].asText() shouldBe appnavn
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = ["beskjed", "oppgave", "innboks"])
-    fun `takler null i produsent-cluster`(varselType: String) {
-        val eventId = randomUUID()
-        val appnavn = "produsent_app"
-        val namespace = "produsent_namespace"
-
-        val varselInaktivert = varselInaktivertPacket(varselType, eventId, null, namespace, appnavn)
+        val varselInaktivert = varselInaktivertPacket(varselType, eventId, namespace, appnavn)
 
         testRapid.sendTestMessage(varselInaktivert)
 
@@ -83,7 +58,6 @@ internal class VarselInaktivertSinkTest {
         hendelseJson["varseltype"].asText() shouldBe varselType
         hendelseJson["varselType"].asText() shouldBe varselType
         hendelseJson["eventId"].asText() shouldBe eventId
-        hendelseJson["cluster"] shouldBe null
         hendelseJson["namespace"].asText() shouldBe namespace
         hendelseJson["appnavn"].asText() shouldBe appnavn
     }

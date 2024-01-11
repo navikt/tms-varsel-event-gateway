@@ -9,7 +9,6 @@ data class InternStatusHendelse(
     override val varselId: String,
     val hendelseType: String,
     val varseltype: String,
-    val cluster: String?,
     val namespace: String,
     val appnavn: String
 ) : VarselHendelse {
@@ -20,7 +19,6 @@ data class InternStatusHendelse(
             "varselType": "$varseltype",
             "eventId": "$varselId",
             "varselId": "$varselId",
-            ${cluster?.let { "\"cluster\": \"$it\"," }?: "" }
             "namespace": "$namespace",
             "appnavn": "$appnavn"
         }
@@ -34,7 +32,6 @@ data class EksternStatusHendelse(
     val kanal: String?,
     val renotifikasjon: Boolean?,
     val feilmelding: String?,
-    val cluster: String?,
     val namespace: String,
     val appnavn: String
 ) : VarselHendelse {
@@ -47,7 +44,6 @@ data class EksternStatusHendelse(
             ${kanal?.let { "\"kanal\": \"$it\"," }?: "" }
             ${renotifikasjon?.let { "\"renotifikasjon\": $it," }?: "" }
             ${feilmelding?.let { "\"feilmelding\": \"$it\"," }?: "" }
-            ${cluster?.let { "\"cluster\": \"$it\"," }?: "" }
             "namespace": "$namespace",
             "appnavn": "$appnavn"
         }

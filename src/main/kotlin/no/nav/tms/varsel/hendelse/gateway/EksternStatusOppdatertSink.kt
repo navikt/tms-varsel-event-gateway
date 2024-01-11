@@ -34,7 +34,6 @@ class EksternStatusOppdatertSink(
             kanal = packet["kanal"].asTextOrNull(),
             renotifikasjon = packet["renotifikasjon"].asBooleanOrNull(),
             feilmelding = packet["feilmelding"].asTextOrNull(),
-            cluster = packet["produsent"]["cluster"].asTextOrNull(),
             namespace = packet["produsent"]["namespace"].asText(),
             appnavn = packet["produsent"]["appnavn"].asText(),
         )

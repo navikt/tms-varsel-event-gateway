@@ -14,7 +14,7 @@ class EksternStatusOppdatertSink(
             validate {  }
             validate {
                 it.demandValue("@event_name", "eksternStatusOppdatert")
-                it.demandAny("status", listOf("bestilt", "sendt", "ferdigstilt", "feilet"))
+                it.demandAny("status", listOf("bestilt", "sendt", "feilet"))
 
                 it.requireKey("varselId")
                 it.requireKey("varseltype")

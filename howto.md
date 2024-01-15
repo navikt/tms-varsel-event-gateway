@@ -2,12 +2,12 @@
 
 Topic: aapen-varsel-hendelse
 
-Tilgang: [aapen-varsel-hendelse-iac](https://github.com/navikt/brukernotifikasjon-public-topic-iac/blob/main/dev-gcp/aapen-varsel-hendelse.yaml)
+Tilgang: [aapen-varsel-hendelse-iac](https://github.com/navikt/min-side-brukervarsel-topic-iac/blob/main/dev-gcp/aapen-varsel-hendelse.yaml)
 
 
 ## Eksempler
 
-Oppgave med eventId "123" mottat fra produsent "team-alfabet:abc" og lagret i database.
+Oppgave med eventId "123" mottatt fra produsent "team-alfabet:abc" og lagret i database.
 
 ```json
 {

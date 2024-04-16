@@ -1,17 +1,17 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm").version(Kotlin.version)
-    kotlin("plugin.allopen").version(Kotlin.version)
 
     id(Shadow.pluginId) version (Shadow.version)
 
     application
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
 }
 
 repositories {
@@ -30,7 +30,6 @@ dependencies {
     implementation(Prometheus.hotspot)
     implementation(RapidsAndRivers.rapidsAndRivers)
     implementation(TmsCommonLib.utils)
-
 
     testImplementation(Junit.api)
     testImplementation(Junit.engine)
@@ -52,11 +51,3 @@ tasks {
         }
     }
 }
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-}
-
-project.setProperty("mainClassName", application.mainClass.get())
-apply(plugin = Shadow.pluginId)

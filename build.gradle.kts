@@ -26,6 +26,7 @@ dependencies {
     implementation(KotlinLogging.logging)
     implementation(Ktor.Serialization.jackson)
     implementation(Ktor.Serialization.kotlinX)
+    implementation(Logstash.logbackEncoder)
     implementation(Prometheus.common)
     implementation(Prometheus.hotspot)
     implementation(RapidsAndRivers.rapidsAndRivers)

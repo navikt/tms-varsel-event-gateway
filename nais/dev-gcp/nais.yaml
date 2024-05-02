@@ -6,8 +6,6 @@ metadata:
   labels:
     team: min-side
 spec:
-  envFrom:
-    - secret: tms-varsel-event-gateway-secrets
   image: {{version}}
   port: 8080
   liveness:
@@ -32,3 +30,10 @@ spec:
     requests:
       cpu: "20m"
       memory: 128Mi
+  env:
+    - name: GROUP_ID
+      value: varsel-event-gateway-01
+    - name: RAPID_TOPIC
+      value: min-side.brukervarsel-v1
+    - name: VARSEL_HENDELSE_TOPIC
+      value: min-side.aapen-varsel-hendelse-v1

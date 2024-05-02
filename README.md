@@ -6,26 +6,40 @@ Første omgang melder den når et varsel først aktiveres (tilgjengelig for bruk
 
 ## Eksempler
 
-Oppgave med eventId "123" mottat fra produsent "team-alfabet:abc" og lagret i database.
+Oppgave med varselId "123" mottat fra produsent "team-alfabet:abc" og lagret i database.
 
 ```json
 {
-  "@event_name": "aktivert",
-  "varselType": "oppgave",
-  "eventId": "123",
+  "@event_name": "opprettet",
+  "varseltype": "oppgave",
+  "varselId": "123",
   "namespace": "team-alfabet",
   "appnavn": "abc"
 }
 ```
 
-Beskjed med eventId "456", opprettet av app "team-alfabet:def", fjernet av bruker.
+Sms sendt for oppgave med varselId "123"
+
+Beskjed med varselId "456", opprettet av app "team-alfabet:def", fjernet av bruker.
 
 ```json
 {
   "@event_name": "inaktivert",
-  "varselType": "beskjed",
-  "eventId": "456",
+  "varseltype": "beskjed",
+  "varselId": "456",
   "namespace": "team-alfabet",
   "appnavn": "def"
+}
+```
+
+Beskjed med varselId "789", opprettet av app "team-alfabet:ghi", slettet etter 1 år.
+
+```json
+{
+  "@event_name": "slettet",
+  "varseltype": "beskjed",
+  "varselId": "456",
+  "namespace": "team-alfabet",
+  "appnavn": "ghi"
 }
 ```

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jsonMapper
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
-import no.nav.helse.rapids_rivers.testsupport.TestRapid
+import no.nav.tms.kafka.application.MessageBroadcaster
 import org.apache.kafka.clients.producer.MockProducer
 import org.apache.kafka.common.serialization.StringSerializer
 import org.junit.jupiter.api.AfterEach
@@ -17,7 +17,7 @@ import java.util.*
 internal class EksternStatusOppdatertSinkTest {
 
     private val hendelseTopic = "hendelseTopic"
-    private val testRapid = TestRapid()
+
 
     private val mockProducer = MockProducer(
         false,
@@ -30,11 +30,15 @@ internal class EksternStatusOppdatertSinkTest {
         hendelseTopic
     )
 
+    private val broadcaster = MessageBroadcaster(
+        listOf(EksternStatusSubscriber(hendelseProducer))
+    )
+
     private val objectMapper = ObjectMapper()
 
     @BeforeAll
     fun setup() {
-        EksternStatusOppdatertSink(testRapid, hendelseProducer)
+        EksternStatusSubscriber(hendelseProducer)
     }
 
     @AfterEach
@@ -49,7 +53,7 @@ internal class EksternStatusOppdatertSinkTest {
         val appnavn = "produsent_app"
         val namespace = "produsent_namespace"
 
-        val bestilt = eksternStatusOppdatertPacket(
+        val bestilt = eksternStatusOppdatertEvent(
             status = "bestilt",
             varseltype = varseltype,
             varselId = varselId,
@@ -57,7 +61,7 @@ internal class EksternStatusOppdatertSinkTest {
             appnavn = appnavn
         )
 
-        val sendt = eksternStatusOppdatertPacket(
+        val sendt = eksternStatusOppdatertEvent(
             status = "sendt",
             kanal = "SMS",
             varseltype = varseltype,
@@ -67,7 +71,7 @@ internal class EksternStatusOppdatertSinkTest {
             appnavn = appnavn
         )
 
-        val ferdigstilt = eksternStatusOppdatertPacket(
+        val ferdigstilt = eksternStatusOppdatertEvent(
             status = "ferdigstilt",
             varseltype = varseltype,
             varselId = varselId,
@@ -75,7 +79,7 @@ internal class EksternStatusOppdatertSinkTest {
             appnavn = appnavn
         )
 
-        val feilet = eksternStatusOppdatertPacket(
+        val feilet = eksternStatusOppdatertEvent(
             status = "feilet",
             feilmelding = "Renotifikasjon feilet",
             varseltype = varseltype,
@@ -84,10 +88,10 @@ internal class EksternStatusOppdatertSinkTest {
             appnavn = appnavn
         )
 
-        testRapid.sendTestMessage(bestilt)
-        testRapid.sendTestMessage(sendt)
-        testRapid.sendTestMessage(ferdigstilt)
-        testRapid.sendTestMessage(feilet)
+        broadcaster.broadcastJson(bestilt)
+        broadcaster.broadcastJson(sendt)
+        broadcaster.broadcastJson(ferdigstilt)
+        broadcaster.broadcastJson(feilet)
 
         mockProducer.history()
             .map{ objectMapper.readTree(it.value()) }
@@ -97,6 +101,7 @@ internal class EksternStatusOppdatertSinkTest {
                 it["varselId"].asText() shouldBe varselId
                 it["namespace"].asText() shouldBe namespace
                 it["appnavn"].asText() shouldBe appnavn
+                it["sendtSomBatch"].asBooleanOrNull() shouldBe null
         }
 
         mockProducer.findEvent { it["status"].asText() == "sendt" }.let {
@@ -108,8 +113,79 @@ internal class EksternStatusOppdatertSinkTest {
         mockProducer.findEvent { it["status"].asText() == "feilet" }.let {
             it["feilmelding"].asText() shouldBe "Renotifikasjon feilet"
         }
+    }
 
 
+    @ParameterizedTest
+    @ValueSource(strings = ["beskjed", "oppgave", "innboks"])
+    fun `plukker opp interne eksternVarslingStatusOppdatert-eventer og publiserer eksternt`(varseltype: String) {
+        val varselId = randomUUID()
+        val appnavn = "produsent_app"
+        val namespace = "produsent_namespace"
+
+        val bestilt = eksternVarslingStatusOppdatertEvent(
+            status = "bestilt",
+            varseltype = varseltype,
+            varselId = varselId,
+            namespace = namespace,
+            appnavn = appnavn
+        )
+
+        val sendt = eksternVarslingStatusOppdatertEvent(
+            status = "sendt",
+            kanal = "SMS",
+            varseltype = varseltype,
+            renotifikasjon = false,
+            varselId = varselId,
+            namespace = namespace,
+            appnavn = appnavn
+        )
+
+        val ferdigstilt = eksternVarslingStatusOppdatertEvent(
+            status = "ferdigstilt",
+            varseltype = varseltype,
+            varselId = varselId,
+            namespace = namespace,
+            appnavn = appnavn
+        )
+
+        val feilet = eksternVarslingStatusOppdatertEvent(
+            status = "feilet",
+            feilmelding = "Renotifikasjon feilet",
+            varseltype = varseltype,
+            varselId = varselId,
+            namespace = namespace,
+            appnavn = appnavn,
+            batch = true
+        )
+
+        broadcaster.broadcastJson(bestilt)
+        broadcaster.broadcastJson(sendt)
+        broadcaster.broadcastJson(ferdigstilt)
+        broadcaster.broadcastJson(feilet)
+
+        mockProducer.history()
+            .map{ objectMapper.readTree(it.value()) }
+            .forEach{
+                it["@event_name"].asText() shouldBe "eksternStatusOppdatert"
+                it["varseltype"].asText() shouldBe varseltype
+                it["varselId"].asText() shouldBe varselId
+                it["namespace"].asText() shouldBe namespace
+                it["appnavn"].asText() shouldBe appnavn
+                it["sendtSomBatch"].asBooleanOrNull().shouldNotBeNull()
+        }
+
+        mockProducer.findEvent { it["status"].asText() == "sendt" }.let {
+            it["kanal"].asText() shouldBe "SMS"
+            it["renotifikasjon"].asBoolean() shouldBe false
+            it["sendtSomBatch"].asBoolean() shouldBe false
+        }
+
+
+        mockProducer.findEvent { it["status"].asText() == "feilet" }.let {
+            it["feilmelding"].asText() shouldBe "Renotifikasjon feilet"
+            it["sendtSomBatch"].asBoolean() shouldBe true
+        }
     }
 
     private fun MockProducer<String, String>.findEvent(predicate: (JsonNode) -> Boolean): JsonNode {

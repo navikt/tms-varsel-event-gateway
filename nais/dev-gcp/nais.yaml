@@ -33,7 +33,7 @@ spec:
   env:
     - name: GROUP_ID
       value: varsel-event-gateway-01
-    - name: RAPID_TOPIC
+    - name: VARSEL_TOPIC
       value: min-side.brukervarsel-v1
     - name: VARSEL_HENDELSE_TOPIC
       value: min-side.aapen-varsel-hendelse-v1

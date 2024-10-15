@@ -9,7 +9,7 @@ import org.apache.kafka.common.serialization.StringSerializer
 import java.util.*
 
 
-fun initializeRapidKafkaProducer(environment: Environment) = KafkaProducer<String, String>(
+fun initializeKafkaProducer(environment: Environment) = KafkaProducer<String, String>(
     Properties().apply {
         put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, environment.kafkaBrokers)
         put(

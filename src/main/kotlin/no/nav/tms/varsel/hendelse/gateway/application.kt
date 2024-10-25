@@ -1,42 +1,23 @@
 package no.nav.tms.varsel.hendelse.gateway
 
-import no.nav.helse.rapids_rivers.RapidApplication
-import no.nav.helse.rapids_rivers.RapidApplication.RapidApplicationConfig.Companion.fromEnv
+import no.nav.tms.kafka.application.KafkaApplication
 
 fun main() {
     val environment = Environment()
 
     val hendelseProducer = HendelseProducer(
-        kafkaProducer = initializeRapidKafkaProducer(environment),
+        kafkaProducer = initializeKafkaProducer(environment),
         topicName = environment.varselHendelseTopic,
     )
 
-    startRapid(
-        environment = environment,
-        hendelseProducer = hendelseProducer,
-    )
-}
-
-private fun startRapid(
-    environment: Environment,
-    hendelseProducer: HendelseProducer
-) {
-    RapidApplication.Builder(fromEnv(environment.rapidConfig)).build().apply {
-        VarselOpprettetSink(
-            rapidsConnection = this,
-            hendelseProducer = hendelseProducer
-        )
-        VarselInaktivertSink(
-            rapidsConnection = this,
-            hendelseProducer = hendelseProducer
-        )
-        VarselArkivertSink(
-            rapidsConnection = this,
-            hendelseProducer = hendelseProducer
-        )
-        EksternStatusOppdatertSink(
-            rapidsConnection = this,
-            hendelseProducer = hendelseProducer
+    KafkaApplication.build {
+        kafkaConfig {
+            groupId = environment.groupId
+            readTopic(environment.varselTopic)
+        }
+        subscribers(
+            VarselLifetimeEventSubscriber(hendelseProducer),
+            EksternStatusSubscriber(hendelseProducer)
         )
     }.start()
 }

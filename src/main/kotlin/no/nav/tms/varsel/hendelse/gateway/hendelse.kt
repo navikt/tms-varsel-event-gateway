@@ -1,28 +1,23 @@
 package no.nav.tms.varsel.hendelse.gateway
 
+import com.fasterxml.jackson.annotation.JsonProperty
+import java.time.ZonedDateTime
+
 interface VarselHendelse {
     val varselId: String
-    fun toJson(): String
 }
 
 data class InternStatusHendelse(
+    @JsonProperty("@event_name") val hendelseType: String,
     override val varselId: String,
-    val hendelseType: String,
     val varseltype: String,
     val namespace: String,
-    val appnavn: String
+    val appnavn: String,
+    val tidspunkt: ZonedDateTime
 ) : VarselHendelse {
-    override fun toJson() = """
-        {
-            "@event_name": "$hendelseType",
-            "varseltype": "$varseltype",
-            "varselType": "$varseltype",
-            "eventId": "$varselId",
-            "varselId": "$varselId",
-            "namespace": "$namespace",
-            "appnavn": "$appnavn"
-        }
-    """.trimIndent()
+
+    val eventId = varselId
+    val varselType = varseltype
 }
 
 data class EksternStatusHendelse(
@@ -32,20 +27,11 @@ data class EksternStatusHendelse(
     val kanal: String?,
     val renotifikasjon: Boolean?,
     val feilmelding: String?,
+    val sendtSomBatch: Boolean?,
     val namespace: String,
-    val appnavn: String
+    val appnavn: String,
+    val tidspunkt: ZonedDateTime
 ) : VarselHendelse {
-    override fun toJson() = """
-        {
-            "@event_name": "eksternStatusOppdatert",
-            "varseltype": "$varseltype",
-            "varselId": "$varselId",
-            "status": "$status",
-            ${kanal?.let { "\"kanal\": \"$it\"," }?: "" }
-            ${renotifikasjon?.let { "\"renotifikasjon\": $it," }?: "" }
-            ${feilmelding?.let { "\"feilmelding\": \"$it\"," }?: "" }
-            "namespace": "$namespace",
-            "appnavn": "$appnavn"
-        }
-    """.trimIndent()
+
+    @JsonProperty("@event_name") val eventName = "eksternStatusOppdatert"
 }

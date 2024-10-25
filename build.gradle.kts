@@ -23,13 +23,16 @@ repositories {
 }
 
 dependencies {
+    implementation(JacksonDatatype.datatypeJsr310)
+    implementation(JacksonDatatype.moduleKotlin)
+    implementation(Kafka.kafka_2_12)
     implementation(KotlinLogging.logging)
     implementation(Ktor.Serialization.jackson)
     implementation(Ktor.Serialization.kotlinX)
     implementation(Logstash.logbackEncoder)
     implementation(Prometheus.common)
-    implementation(Prometheus.hotspot)
-    implementation(RapidsAndRivers.rapidsAndRivers)
+    implementation(Prometheus.simpleClient)
+    implementation(TmsKafkaTools.kafkaApplication)
     implementation(TmsCommonLib.utils)
 
     testImplementation(Junit.api)

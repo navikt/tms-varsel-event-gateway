@@ -4,7 +4,7 @@ import org.intellij.lang.annotations.Language
 import java.time.ZonedDateTime
 
 @Language("JSON")
-fun varselOpprettetPacket(
+fun varselOpprettetEvent(
     varseltype: String = "beskjed",
     varselId: String = "123",
     namespace: String = "namespace",
@@ -41,7 +41,7 @@ fun varselOpprettetPacket(
 """.trimIndent()
 
 @Language("JSON")
-internal fun varselInaktivertPacket(
+internal fun varselInaktivertEvent(
     varseltype: String = "beskjed",
     varselId: String = "123",
     namespace: String = "namespace",
@@ -62,7 +62,7 @@ internal fun varselInaktivertPacket(
 """.trimIndent()
 
 @Language("JSON")
-internal fun varselArkivertPacket(
+internal fun varselArkivertEvent(
     varseltype: String = "beskjed",
     varselId: String = "123",
     namespace: String = "namespace",
@@ -83,7 +83,7 @@ internal fun varselArkivertPacket(
 """.trimIndent()
 
 @Language("JSON")
-internal fun eksternStatusOppdatertPacket(
+internal fun eksternStatusOppdatertEvent(
     status: String = "sendt",
     varselId: String = "123",
     ident: String = "12345678901",
@@ -109,5 +109,36 @@ internal fun eksternStatusOppdatertPacket(
   "kanal": ${kanal?.let { "\"$it\"" } ?: "null"},
   "tidspunkt": "${ZonedDateTime.now()}",
   "@event_name": "eksternStatusOppdatert"
+}
+""".trimIndent()
+
+
+@Language("JSON")
+internal fun eksternVarslingStatusOppdatertEvent(
+    status: String = "sendt",
+    varselId: String = "123",
+    varseltype: String = "beskjed",
+    kanal: String? = "SMS",
+    renotifikasjon: Boolean? = false,
+    batch: Boolean = false,
+    feilmelding: String? = "Ekstern feil",
+    namespace: String = "namespace",
+    appnavn: String = "appnavn"
+) = """
+{
+  "status": "$status",
+  "varselId": "$varselId",
+  "varseltype": "$varseltype",
+  "produsent": {
+    "cluster": "cluster",
+    "namespace": "$namespace",
+    "appnavn": "$appnavn"
+  },
+  "renotifikasjon": ${renotifikasjon?.let { "$it" } ?: "null"},
+  "batch": $batch,
+  "feilmelding": ${feilmelding?.let { "\"$it\"" } ?: "null"},
+  "kanal": ${kanal?.let { "\"$it\"" } ?: "null"},
+  "tidspunkt": "${ZonedDateTime.now()}",
+  "@event_name": "eksternVarslingStatusOppdatert"
 }
 """.trimIndent()

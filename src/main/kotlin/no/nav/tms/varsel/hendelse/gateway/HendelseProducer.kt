@@ -6,11 +6,9 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonMapperBuilder
 import io.github.oshai.kotlinlogging.KotlinLogging
+import no.nav.tms.common.observability.traceVarsel
 import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
-import java.time.temporal.ChronoUnit
 
 class HendelseProducer(
     private val kafkaProducer: Producer<String, String>,
@@ -20,7 +18,7 @@ class HendelseProducer(
 
     private val objectMapper = defaultObjectMapper()
 
-    fun sendVarselHendelse(hendelse: VarselHendelse) {
+    fun sendVarselHendelse(hendelse: VarselHendelse) = traceVarsel(id = hendelse.varselId) {
 
         log.info { "Videresender ${hendelse.logDescription()}" }
 

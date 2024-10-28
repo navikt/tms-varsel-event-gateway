@@ -34,6 +34,7 @@ dependencies {
     implementation(Prometheus.simpleClient)
     implementation(TmsKafkaTools.kafkaApplication)
     implementation(TmsCommonLib.utils)
+    implementation(TmsCommonLib.observability)
 
     testImplementation(Junit.api)
     testImplementation(Junit.engine)

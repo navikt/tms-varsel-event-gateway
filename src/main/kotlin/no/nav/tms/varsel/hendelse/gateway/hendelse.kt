@@ -5,6 +5,7 @@ import java.time.ZonedDateTime
 
 interface VarselHendelse {
     val varselId: String
+    fun logDescription(): String
 }
 
 data class InternStatusHendelse(
@@ -18,6 +19,8 @@ data class InternStatusHendelse(
 
     val eventId = varselId
     val varselType = varseltype
+
+    override fun logDescription() = "'$hendelseType'event for $varseltype"
 }
 
 data class EksternStatusHendelse(
@@ -34,4 +37,6 @@ data class EksternStatusHendelse(
 ) : VarselHendelse {
 
     @JsonProperty("@event_name") val eventName = "eksternStatusOppdatert"
+
+    override fun logDescription() = "'$eventName'-event for $varseltype med status '$status'"
 }

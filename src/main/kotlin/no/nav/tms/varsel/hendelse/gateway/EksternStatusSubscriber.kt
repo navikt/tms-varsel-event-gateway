@@ -10,7 +10,7 @@ class EksternStatusSubscriber(
 ) : Subscriber() {
 
     override fun subscribe() = Subscription.forEvents("eksternStatusOppdatert", "eksternVarslingStatusOppdatert")
-        .withAnyValue("status", "bestilt", "sendt", "feilet")
+        .withAnyValue("status", "bestilt", "sendt", "feilet", "venter", "kansellert")
         .withFields(
             "varselId",
             "varseltype",

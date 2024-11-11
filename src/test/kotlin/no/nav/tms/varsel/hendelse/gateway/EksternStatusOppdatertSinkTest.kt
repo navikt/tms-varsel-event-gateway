@@ -3,6 +3,8 @@ package no.nav.tms.varsel.hendelse.gateway
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jsonMapper
+import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import no.nav.tms.kafka.application.MessageBroadcaster
@@ -53,8 +55,24 @@ internal class EksternStatusOppdatertSinkTest {
         val appnavn = "produsent_app"
         val namespace = "produsent_namespace"
 
+        val venter = eksternStatusOppdatertEvent(
+            status = "venter",
+            varseltype = varseltype,
+            varselId = varselId,
+            namespace = namespace,
+            appnavn = appnavn
+        )
+
         val bestilt = eksternStatusOppdatertEvent(
             status = "bestilt",
+            varseltype = varseltype,
+            varselId = varselId,
+            namespace = namespace,
+            appnavn = appnavn
+        )
+
+        val info = eksternStatusOppdatertEvent(
+            status = "info",
             varseltype = varseltype,
             varselId = varselId,
             namespace = namespace,
@@ -66,6 +84,7 @@ internal class EksternStatusOppdatertSinkTest {
             kanal = "SMS",
             varseltype = varseltype,
             renotifikasjon = false,
+            batch = true,
             varselId = varselId,
             namespace = namespace,
             appnavn = appnavn
@@ -88,10 +107,21 @@ internal class EksternStatusOppdatertSinkTest {
             appnavn = appnavn
         )
 
+        val kansellert = eksternStatusOppdatertEvent(
+            status = "kansellert",
+            varseltype = varseltype,
+            varselId = varselId,
+            namespace = namespace,
+            appnavn = appnavn
+        )
+
         broadcaster.broadcastJson(bestilt)
+        broadcaster.broadcastJson(info)
         broadcaster.broadcastJson(sendt)
         broadcaster.broadcastJson(ferdigstilt)
         broadcaster.broadcastJson(feilet)
+        broadcaster.broadcastJson(venter)
+        broadcaster.broadcastJson(kansellert)
 
         mockProducer.history()
             .map{ objectMapper.readTree(it.value()) }
@@ -101,14 +131,27 @@ internal class EksternStatusOppdatertSinkTest {
                 it["varselId"].asText() shouldBe varselId
                 it["namespace"].asText() shouldBe namespace
                 it["appnavn"].asText() shouldBe appnavn
-                it["sendtSomBatch"].asBooleanOrNull() shouldBe null
         }
+
+        mockProducer.history()
+            .map { objectMapper.readTree(it.value()) }
+            .map { it["status"].asText() }
+            .toList()
+            .let {
+                it shouldContain "bestilt"
+                it shouldContain "sendt"
+                it shouldContain "feilet"
+                it shouldContain "venter"
+                it shouldContain "kansellert"
+                it shouldNotContain "info"
+                it shouldNotContain "ferdigstilt"
+            }
 
         mockProducer.findEvent { it["status"].asText() == "sendt" }.let {
             it["kanal"].asText() shouldBe "SMS"
             it["renotifikasjon"].asBoolean() shouldBe false
+            it["sendtSomBatch"].asBoolean() shouldBe true
         }
-
 
         mockProducer.findEvent { it["status"].asText() == "feilet" }.let {
             it["feilmelding"].asText() shouldBe "Renotifikasjon feilet"

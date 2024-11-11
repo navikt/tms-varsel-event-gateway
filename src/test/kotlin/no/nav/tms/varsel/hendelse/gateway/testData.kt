@@ -92,7 +92,8 @@ internal fun eksternStatusOppdatertEvent(
     renotifikasjon: Boolean? = false,
     feilmelding: String? = "Ekstern feil",
     namespace: String = "namespace",
-    appnavn: String = "appnavn"
+    appnavn: String = "appnavn",
+    batch: Boolean? = null
 ) = """
 {
   "status": "$status",
@@ -105,6 +106,7 @@ internal fun eksternStatusOppdatertEvent(
     "appnavn": "$appnavn"
   },
   "renotifikasjon": ${renotifikasjon?.let { "$it" } ?: "null"},
+  "batch": ${batch?.let { "$it" } ?: "null"},
   "feilmelding": ${feilmelding?.let { "\"$it\"" } ?: "null"},
   "kanal": ${kanal?.let { "\"$it\"" } ?: "null"},
   "tidspunkt": "${ZonedDateTime.now()}",

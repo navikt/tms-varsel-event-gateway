@@ -36,3 +36,5 @@ spec:
       value: min-side.brukervarsel-v1
     - name: VARSEL_HENDELSE_TOPIC
       value: min-side.aapen-varsel-hendelse-v1
+    - name: EKSTERN_STATUS_FILTER
+      value: "bestilt,sendt,feilet"

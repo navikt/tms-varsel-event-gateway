@@ -11,7 +11,6 @@ import no.nav.tms.kafka.application.MessageBroadcaster
 import org.apache.kafka.clients.producer.MockProducer
 import org.apache.kafka.common.serialization.StringSerializer
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import java.util.*
@@ -32,16 +31,13 @@ internal class EksternStatusOppdatertSinkTest {
         hendelseTopic
     )
 
+    private val filteredStatuses = listOf("bestilt", "sendt", "feilet", "venter", "kansellert")
+
     private val broadcaster = MessageBroadcaster(
-        listOf(EksternStatusSubscriber(hendelseProducer))
+        listOf(EksternStatusSubscriber(hendelseProducer, filteredStatuses))
     )
 
     private val objectMapper = ObjectMapper()
-
-    @BeforeAll
-    fun setup() {
-        EksternStatusSubscriber(hendelseProducer)
-    }
 
     @AfterEach
     fun cleanup() {
@@ -201,6 +197,81 @@ internal class EksternStatusOppdatertSinkTest {
             appnavn = appnavn,
             batch = true
         )
+
+        broadcaster.broadcastJson(bestilt)
+        broadcaster.broadcastJson(sendt)
+        broadcaster.broadcastJson(ferdigstilt)
+        broadcaster.broadcastJson(feilet)
+
+        mockProducer.history()
+            .map{ objectMapper.readTree(it.value()) }
+            .forEach{
+                it["@event_name"].asText() shouldBe "eksternStatusOppdatert"
+                it["varseltype"].asText() shouldBe varseltype
+                it["varselId"].asText() shouldBe varselId
+                it["namespace"].asText() shouldBe namespace
+                it["appnavn"].asText() shouldBe appnavn
+                it["sendtSomBatch"].asBooleanOrNull().shouldNotBeNull()
+        }
+
+        mockProducer.findEvent { it["status"].asText() == "sendt" }.let {
+            it["kanal"].asText() shouldBe "SMS"
+            it["renotifikasjon"].asBoolean() shouldBe false
+            it["sendtSomBatch"].asBoolean() shouldBe false
+        }
+
+
+        mockProducer.findEvent { it["status"].asText() == "feilet" }.let {
+            it["feilmelding"].asText() shouldBe "Renotifikasjon feilet"
+            it["sendtSomBatch"].asBoolean() shouldBe true
+        }
+    }
+
+
+    @ParameterizedTest
+    @ValueSource(strings = ["beskjed", "oppgave", "innboks"])
+    fun `tillater filtrering av statuser basert på config`(varseltype: String) {
+        val varselId = randomUUID()
+        val appnavn = "produsent_app"
+        val namespace = "produsent_namespace"
+
+        val bestilt = eksternVarslingStatusOppdatertEvent(
+            status = "bestilt",
+            varseltype = varseltype,
+            varselId = varselId,
+            namespace = namespace,
+            appnavn = appnavn
+        )
+
+        val sendt = eksternVarslingStatusOppdatertEvent(
+            status = "sendt",
+            kanal = "SMS",
+            varseltype = varseltype,
+            renotifikasjon = false,
+            varselId = varselId,
+            namespace = namespace,
+            appnavn = appnavn
+        )
+
+        val ferdigstilt = eksternVarslingStatusOppdatertEvent(
+            status = "ferdigstilt",
+            varseltype = varseltype,
+            varselId = varselId,
+            namespace = namespace,
+            appnavn = appnavn
+        )
+
+        val feilet = eksternVarslingStatusOppdatertEvent(
+            status = "feilet",
+            feilmelding = "Renotifikasjon feilet",
+            varseltype = varseltype,
+            varselId = varselId,
+            namespace = namespace,
+            appnavn = appnavn,
+            batch = true
+        )
+
+        val sendtOnlySubscriber = EksternStatusSubscriber(hendelseProducer, listOf("sendt"))
 
         broadcaster.broadcastJson(bestilt)
         broadcaster.broadcastJson(sendt)

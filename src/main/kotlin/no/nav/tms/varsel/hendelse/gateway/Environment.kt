@@ -1,6 +1,7 @@
 package no.nav.tms.varsel.hendelse.gateway
 
 import no.nav.tms.common.util.config.StringEnvVar.getEnvVar
+import no.nav.tms.common.util.config.StringEnvVar.getEnvVarAsList
 
 data class Environment(
     val groupId: String = getEnvVar("GROUP_ID"),
@@ -10,4 +11,5 @@ data class Environment(
     val kafkaCredstorePassword: String = getEnvVar("KAFKA_CREDSTORE_PASSWORD"),
     val varselHendelseTopic: String = getEnvVar("VARSEL_HENDELSE_TOPIC"),
     val varselTopic: String = getEnvVar("VARSEL_TOPIC"),
+    val eksternStatusFilter: List<String> = getEnvVarAsList("EKSTERN_STATUS_FILTER")
 )

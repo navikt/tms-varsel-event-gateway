@@ -17,7 +17,7 @@ fun main() {
         }
         subscribers(
             VarselLifetimeEventSubscriber(hendelseProducer),
-            EksternStatusSubscriber(hendelseProducer)
+            EksternStatusSubscriber(hendelseProducer, environment.eksternStatusFilter)
         )
     }.start()
 }

@@ -6,11 +6,12 @@ import no.nav.tms.kafka.application.Subscription
 import java.time.ZonedDateTime
 
 class EksternStatusSubscriber(
-    private val hendelseProducer: HendelseProducer
+    private val hendelseProducer: HendelseProducer,
+    private val eksternStatusFilter: List<String>
 ) : Subscriber() {
 
     override fun subscribe() = Subscription.forEvents("eksternStatusOppdatert", "eksternVarslingStatusOppdatert")
-        .withAnyValue("status", "bestilt", "sendt", "feilet", "venter", "kansellert")
+        .withAnyValue("status", *eksternStatusFilter.toTypedArray())
         .withFields(
             "varselId",
             "varseltype",

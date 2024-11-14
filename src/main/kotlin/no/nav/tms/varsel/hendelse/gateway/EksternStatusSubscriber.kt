@@ -10,7 +10,7 @@ class EksternStatusSubscriber(
     private val eksternStatusFilter: List<String>
 ) : Subscriber() {
 
-    override fun subscribe() = Subscription.forEvents("eksternStatusOppdatert", "eksternVarslingStatusOppdatert")
+    override fun subscribe() = Subscription.forEvents("eksternVarslingStatusOppdatert")
         .withAnyValue("status", *eksternStatusFilter.toTypedArray())
         .withFields(
             "varselId",
@@ -26,14 +26,22 @@ class EksternStatusSubscriber(
         )
 
     override suspend fun receive(jsonMessage: JsonMessage) {
+        val status = jsonMessage["status"].asText()
+
+        val sendtSomBatch = if(status == "sendt") {
+            jsonMessage.getOrNull("batch")?.asBoolean() ?: false
+        } else {
+            null
+        }
+
         val hendelse = EksternStatusHendelse(
-            status = jsonMessage["status"].asText(),
+            status = status,
             varselId = jsonMessage["varselId"].asText(),
             varseltype = jsonMessage["varseltype"].asText(),
             kanal = jsonMessage.getOrNull("kanal")?.asText(),
             renotifikasjon = jsonMessage.getOrNull("renotifikasjon")?.asBoolean(),
+            sendtSomBatch = sendtSomBatch,
             feilmelding = jsonMessage.getOrNull("feilmelding")?.asText(),
-            sendtSomBatch = jsonMessage.getOrNull("batch")?.asBoolean(),
             namespace = jsonMessage["produsent"]["namespace"].asText(),
             appnavn = jsonMessage["produsent"]["appnavn"].asText(),
             tidspunkt = jsonMessage["tidspunkt"].asText().let { ZonedDateTime.parse(it) }

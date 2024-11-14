@@ -82,48 +82,16 @@ internal fun varselArkivertEvent(
 }
 """.trimIndent()
 
-@Language("JSON")
-internal fun eksternStatusOppdatertEvent(
-    status: String = "sendt",
-    varselId: String = "123",
-    ident: String = "12345678901",
-    varseltype: String = "beskjed",
-    kanal: String? = "SMS",
-    renotifikasjon: Boolean? = false,
-    feilmelding: String? = "Ekstern feil",
-    namespace: String = "namespace",
-    appnavn: String = "appnavn",
-    batch: Boolean? = null
-) = """
-{
-  "status": "$status",
-  "varselId": "$varselId",
-  "ident": "$ident",
-  "varseltype": "$varseltype",
-  "produsent": {
-    "cluster": "cluster",
-    "namespace": "$namespace",
-    "appnavn": "$appnavn"
-  },
-  "renotifikasjon": ${renotifikasjon?.let { "$it" } ?: "null"},
-  "batch": ${batch?.let { "$it" } ?: "null"},
-  "feilmelding": ${feilmelding?.let { "\"$it\"" } ?: "null"},
-  "kanal": ${kanal?.let { "\"$it\"" } ?: "null"},
-  "tidspunkt": "${ZonedDateTime.now()}",
-  "@event_name": "eksternStatusOppdatert"
-}
-""".trimIndent()
-
 
 @Language("JSON")
 internal fun eksternVarslingStatusOppdatertEvent(
     status: String = "sendt",
     varselId: String = "123",
     varseltype: String = "beskjed",
-    kanal: String? = "SMS",
-    renotifikasjon: Boolean? = false,
-    batch: Boolean = false,
-    feilmelding: String? = "Ekstern feil",
+    kanal: String? = null,
+    renotifikasjon: Boolean? = null,
+    batch: Boolean? = null,
+    feilmelding: String? = null,
     namespace: String = "namespace",
     appnavn: String = "appnavn"
 ) = """

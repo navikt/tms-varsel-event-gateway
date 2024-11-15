@@ -37,4 +37,4 @@ spec:
     - name: VARSEL_HENDELSE_TOPIC
       value: min-side.aapen-varsel-hendelse-v1
     - name: EKSTERN_STATUS_FILTER
-      value: "bestilt,sendt,feilet,venter,kansellert,ferdigstilt"
+      value: "bestilt,sendt,feilet,venter,kansellert"

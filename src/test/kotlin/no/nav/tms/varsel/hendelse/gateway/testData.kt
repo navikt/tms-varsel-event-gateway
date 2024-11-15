@@ -91,6 +91,7 @@ internal fun eksternVarslingStatusOppdatertEvent(
     kanal: String? = null,
     renotifikasjon: Boolean? = null,
     batch: Boolean? = null,
+    melding: String? = null,
     feilmelding: String? = null,
     namespace: String = "namespace",
     appnavn: String = "appnavn"
@@ -106,6 +107,7 @@ internal fun eksternVarslingStatusOppdatertEvent(
   },
   "renotifikasjon": ${renotifikasjon?.let { "$it" } ?: "null"},
   "batch": $batch,
+  "melding": ${melding?.let { "\"$it\"" } ?: "null"},
   "feilmelding": ${feilmelding?.let { "\"$it\"" } ?: "null"},
   "kanal": ${kanal?.let { "\"$it\"" } ?: "null"},
   "tidspunkt": "${ZonedDateTime.now()}",

@@ -32,7 +32,7 @@ internal class EksternStatusOppdatertSinkTest {
         hendelseTopic
     )
 
-    private val filteredStatuses = listOf("bestilt", "sendt", "feilet", "venter", "kansellert")
+    private val filteredStatuses = listOf("bestilt", "sendt", "feilet", "venter", "kansellert", "ferdigstilt")
 
     private val broadcaster = MessageBroadcaster(
         listOf(EksternStatusSubscriber(hendelseProducer, filteredStatuses))
@@ -74,9 +74,11 @@ internal class EksternStatusOppdatertSinkTest {
             status = "ferdigstilt",
             varseltype = varseltype,
             varselId = varselId,
+            melding = "Notifikasjon er ferdigstilt og renotifikasjon er stanset",
             namespace = namespace,
             appnavn = appnavn
         )
+
 
         val feilet = eksternVarslingStatusOppdatertEvent(
             status = "feilet",
@@ -105,13 +107,22 @@ internal class EksternStatusOppdatertSinkTest {
 
         mockProducer.findEvent { it["status"].asText() == "sendt" }.let {
             it["kanal"].asText() shouldBe "SMS"
+            it["melding"].asTextOrNull().shouldBeNull()
+            it["feilmelding"].asTextOrNull().shouldBeNull()
             it["renotifikasjon"].asBoolean() shouldBe false
             it["sendtSomBatch"].asBoolean() shouldBe false
         }
 
-
         mockProducer.findEvent { it["status"].asText() == "feilet" }.let {
+            it["melding"].asTextOrNull().shouldBeNull()
             it["feilmelding"].asText() shouldBe "Renotifikasjon feilet"
+            it["renotifikasjon"].asBooleanOrNull().shouldBeNull()
+            it["sendtSomBatch"].asBooleanOrNull().shouldBeNull()
+        }
+
+        mockProducer.findEvent { it["status"].asText() == "ferdigstilt" }.let {
+            it["melding"].asText() shouldBe "Notifikasjon er ferdigstilt og renotifikasjon er stanset"
+            it["feilmelding"].asTextOrNull().shouldBeNull()
             it["renotifikasjon"].asBooleanOrNull().shouldBeNull()
             it["sendtSomBatch"].asBooleanOrNull().shouldBeNull()
         }
@@ -147,6 +158,7 @@ internal class EksternStatusOppdatertSinkTest {
             status = "ferdigstilt",
             varseltype = varseltype,
             varselId = varselId,
+            melding = "Notifikasjon er ferdigstilt og renotifikasjon er stanset",
             namespace = namespace,
             appnavn = appnavn
         )

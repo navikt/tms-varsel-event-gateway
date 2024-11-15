@@ -21,6 +21,7 @@ class EksternStatusSubscriber(
         .withOptionalFields(
             "kanal",
             "renotifikasjon",
+            "melding",
             "feilmelding",
             "batch"
         )
@@ -41,6 +42,7 @@ class EksternStatusSubscriber(
             kanal = jsonMessage.getOrNull("kanal")?.asText(),
             renotifikasjon = jsonMessage.getOrNull("renotifikasjon")?.asBoolean(),
             sendtSomBatch = sendtSomBatch,
+            melding = jsonMessage.getOrNull("melding")?.asText(),
             feilmelding = jsonMessage.getOrNull("feilmelding")?.asText(),
             namespace = jsonMessage["produsent"]["namespace"].asText(),
             appnavn = jsonMessage["produsent"]["appnavn"].asText(),

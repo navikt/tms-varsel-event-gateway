@@ -29,6 +29,7 @@ data class EksternStatusHendelse(
     val varseltype: String,
     val kanal: String?,
     val renotifikasjon: Boolean?,
+    val melding: String?,
     val feilmelding: String?,
     val sendtSomBatch: Boolean?,
     val namespace: String,

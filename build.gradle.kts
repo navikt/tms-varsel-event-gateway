@@ -35,9 +35,9 @@ dependencies {
     implementation(TmsCommonLib.utils)
     implementation(TmsCommonLib.observability)
 
-    testImplementation(Junit.api)
-    testImplementation(Junit.engine)
-    testImplementation(Junit.params)
+    testImplementation(JunitPlatform.launcher)
+    testImplementation(JunitJupiter.api)
+    testImplementation(JunitJupiter.params)
     testImplementation(Mockk.mockk)
     testImplementation(Kotest.assertionsCore)
 }

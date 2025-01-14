@@ -8,4 +8,3 @@
  */
 
 rootProject.name = "tms-varsel-event-gateway"
-include("app", "lib")

@@ -9,7 +9,7 @@ interface VarselHendelse {
 }
 
 data class InternStatusHendelse(
-    @JsonProperty("@event_name") val hendelseType: String,
+    @param:JsonProperty("@event_name") val hendelseType: String,
     override val varselId: String,
     val varseltype: String,
     val namespace: String,

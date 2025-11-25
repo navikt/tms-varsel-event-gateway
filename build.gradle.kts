@@ -25,7 +25,7 @@ repositories {
 dependencies {
     implementation(JacksonDatatype.datatypeJsr310)
     implementation(JacksonDatatype.moduleKotlin)
-    implementation(Kafka.kafka_2_12)
+    implementation(Kafka.clients)
     implementation(KotlinLogging.logging)
     implementation(Ktor.Serialization.jackson)
     implementation(Ktor.Serialization.kotlinX)

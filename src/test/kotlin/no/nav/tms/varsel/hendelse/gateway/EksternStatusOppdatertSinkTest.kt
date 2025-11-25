@@ -23,6 +23,7 @@ internal class EksternStatusOppdatertSinkTest {
 
     private val mockProducer = MockProducer(
         false,
+        null,
         StringSerializer(),
         StringSerializer()
     )

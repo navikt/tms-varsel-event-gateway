@@ -37,6 +37,7 @@ dependencies {
 
     testImplementation(JunitPlatform.launcher)
     testImplementation(JunitJupiter.api)
+    testImplementation(JunitJupiter.engine)
     testImplementation(JunitJupiter.params)
     testImplementation(Mockk.mockk)
     testImplementation(Kotest.assertionsCore)

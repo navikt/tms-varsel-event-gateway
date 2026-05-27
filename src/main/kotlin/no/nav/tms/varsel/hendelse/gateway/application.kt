@@ -19,5 +19,9 @@ fun main() {
             VarselLifetimeEventSubscriber(hendelseProducer),
             EksternStatusSubscriber(hendelseProducer, environment.eksternStatusFilter)
         )
+
+        minSideMdc {
+            enabled = false
+        }
     }.start()
 }

@@ -1,7 +1,7 @@
 package no.nav.tms.varsel.hendelse.gateway
 
 import no.nav.tms.kafka.application.JsonMessage
-import no.nav.tms.kafka.application.MessageException
+import no.nav.tms.kafka.application.SkippableMessageException
 import no.nav.tms.kafka.application.Subscriber
 import no.nav.tms.kafka.application.Subscription
 import java.time.ZonedDateTime
@@ -36,7 +36,7 @@ class VarselLifetimeEventSubscriber(
     fun varselType(jsonMessage: JsonMessage): String {
         return jsonMessage.getOrNull("varseltype")?.asText()
             ?: jsonMessage.getOrNull("type")?.asText()
-            ?: throw MessageException("Manglet felt for varseltype")
+            ?: throw MissingFieldsException("Manglet felt for varseltype")
     }
 
     fun mapEventName(name: String) = when(name) {
@@ -45,3 +45,4 @@ class VarselLifetimeEventSubscriber(
     }
 }
 
+class MissingFieldsException(msg: String): SkippableMessageException(msg)

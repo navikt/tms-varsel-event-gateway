@@ -15,7 +15,7 @@ internal class VarselLifetimeEventSubscriberTest {
     private val hendelseTopic = "hendelseTopic"
 
     private val mockProducer = MockProducer(
-        false,
+        true,
         null,
         StringSerializer(),
         StringSerializer()

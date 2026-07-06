@@ -7,8 +7,13 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonMapperBuilder
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.oshai.kotlinlogging.withLoggingContext
+import no.nav.tms.kafka.application.RetriableMessageException
 import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
+import org.apache.kafka.common.KafkaException
+import org.apache.kafka.common.errors.AuthenticationException
+import org.apache.kafka.common.errors.OutOfOrderSequenceException
+import org.apache.kafka.common.errors.ProducerFencedException
 
 class HendelseProducer(
     private val kafkaProducer: Producer<String, String>,
@@ -24,10 +29,28 @@ class HendelseProducer(
 
         val hendelseJson = objectMapper.writeValueAsString(hendelse)
 
-        val producerRecord = ProducerRecord(topicName, hendelse.varselId, hendelseJson)
-        kafkaProducer.send(producerRecord)
+        ProducerRecord(topicName, hendelse.varselId, hendelseJson)
+            .let(::synchronizedSend)
+    }
+
+    private fun synchronizedSend(record: ProducerRecord<String, String>) {
+        val result = try {
+            kafkaProducer.send(record)
+                .get()
+        } catch (e: KafkaException) {
+            when (e) {
+                is AuthenticationException -> throw e
+                else -> throw RecordSendException("Feil ved sending av varsel-event", e)
+            }
+        }
+
+        if (!result.hasOffset()) {
+            throw RecordSendException("Varsel-event ble ikke persistert på kafka")
+        }
     }
 }
+
+class RecordSendException(msg: String, cause: Exception? = null): RetriableMessageException(msg, cause)
 
 private fun defaultObjectMapper() = jacksonMapperBuilder()
     .addModule(JavaTimeModule())

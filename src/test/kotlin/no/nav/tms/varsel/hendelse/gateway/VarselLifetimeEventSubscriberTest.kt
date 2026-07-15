@@ -82,7 +82,7 @@ internal class VarselLifetimeEventSubscriberTest {
 
     @ParameterizedTest
     @ValueSource(strings = ["beskjed", "oppgave", "innboks"])
-    fun `plukker opp interne aktivert-eventer og publiserer eksternt`(varseltype: String) {
+    fun `plukker opp interne opprettet-eventer og publiserer eksternt`(varseltype: String) {
         val varselId = randomUUID()
         val namespace = "produsent_namespace"
         val appnavn = "produsent_app"

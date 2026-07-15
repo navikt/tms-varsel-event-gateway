@@ -3,20 +3,22 @@ package no.nav.tms.varsel.hendelse.gateway
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jsonMapper
-import io.kotest.matchers.collections.shouldContain
-import io.kotest.matchers.collections.shouldNotContain
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import no.nav.tms.kafka.application.MessageBroadcaster
+import no.nav.tms.kafka.application.RetriableMessageException
 import org.apache.kafka.clients.producer.MockProducer
+import org.apache.kafka.common.errors.TimeoutException
 import org.apache.kafka.common.serialization.StringSerializer
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import java.util.*
 
-internal class EksternStatusOppdatertSinkTest {
+internal class EksternStatusOppdatertSubscriberTest {
 
     private val hendelseTopic = "hendelseTopic"
 
@@ -44,6 +46,7 @@ internal class EksternStatusOppdatertSinkTest {
     @AfterEach
     fun cleanup() {
         mockProducer.clear()
+        mockProducer.sendException = null
     }
 
     @ParameterizedTest
@@ -129,7 +132,6 @@ internal class EksternStatusOppdatertSinkTest {
         }
     }
 
-
     @ParameterizedTest
     @ValueSource(strings = ["beskjed", "oppgave", "innboks"])
     fun `tillater filtrering av statuser basert på config`(varseltype: String) {
@@ -194,6 +196,29 @@ internal class EksternStatusOppdatertSinkTest {
                 it["appnavn"].asText() shouldBe appnavn
                 it["sendtSomBatch"].asBooleanOrNull().shouldNotBeNull()
         }
+    }
+
+    @Test
+    fun `signaliserer at behandling av kafka-melding bør forsøkes på nytt ved feil under sending`() {
+        val varselId = randomUUID()
+        val appnavn = "produsent_app"
+        val namespace = "produsent_namespace"
+
+        val bestilt = eksternVarslingStatusOppdatertEvent(
+            status = "bestilt",
+            varseltype = "beskjed",
+            varselId = varselId,
+            namespace = namespace,
+            appnavn = appnavn
+        )
+
+        mockProducer.sendException = TimeoutException()
+
+        shouldThrow<RetriableMessageException> {
+            broadcaster.broadcastJson(bestilt)
+        }
+
+        mockProducer.history().size shouldBe 0
     }
 
     private fun MockProducer<String, String>.findEvent(predicate: (JsonNode) -> Boolean): JsonNode {

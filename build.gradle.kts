@@ -32,6 +32,7 @@ dependencies {
     implementation(Logstash.logbackEncoder)
     implementation(Prometheus.metricsCore)
     implementation(TmsKafkaTools.kafkaApplication)
+    implementation(TmsKafkaTools.kafkaProducerUtils)
     implementation(TmsCommonLib.utils)
     implementation(TmsCommonLib.observability)
 

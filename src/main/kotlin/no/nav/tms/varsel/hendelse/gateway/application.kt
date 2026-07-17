@@ -1,12 +1,13 @@
 package no.nav.tms.varsel.hendelse.gateway
 
 import no.nav.tms.kafka.application.KafkaApplication
+import no.nav.tms.kafka.producer.KafkaProducerBuilder
 
 fun main() {
     val environment = Environment()
 
     val hendelseProducer = HendelseProducer(
-        kafkaProducer = initializeKafkaProducer(environment),
+        kafkaProducer = KafkaProducerBuilder.stringProducer(),
         topicName = environment.varselHendelseTopic,
     )
 

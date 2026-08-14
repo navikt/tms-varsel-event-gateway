@@ -1,5 +1,9 @@
 # Lytte på varsel-hendelser
 
+Min side publiserer en hendelse hver gang et varsel blir opprettet, inaktivert
+eller slettet, og når status for ekstern varsling endrer seg. Lytt på dem hvis
+teamet ditt trenger å følge livsløpet til varslene dere selv har sendt.
+
 Topic: `min-side.aapen-varsel-hendelse-v1`
 
 Tilgang: [aapen-varsel-hendelse-iac](https://github.com/navikt/min-side-brukervarsel-topic-iac/blob/main/dev-gcp/aapen-varsel-hendelse.yaml)
@@ -80,3 +84,7 @@ Ekstern varsling for oppgaven over er sendt på sms.
   "tidspunkt": "2026-01-15T09:05:00Z"
 }
 ```
+
+## Kontakt
+
+Ta kontakt med oss [på Slack](https://nav-it.slack.com/archives/C0912F59V29) hvis du lurer på noe.

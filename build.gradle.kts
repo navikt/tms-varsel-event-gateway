@@ -1,10 +1,8 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
-    kotlin("jvm").version(Kotlin.version)
-
-    id(TmsJarBundling.plugin)
-
+    alias(managed.plugins.kotlin)
+    alias(managed.plugins.tms.jarBundling)
     application
 }
 
@@ -23,25 +21,23 @@ repositories {
 }
 
 dependencies {
-    implementation(JacksonDatatype.datatypeJsr310)
-    implementation(JacksonDatatype.moduleKotlin)
-    implementation(Kafka.clients)
-    implementation(KotlinLogging.logging)
-    implementation(Ktor.Serialization.jackson)
-    implementation(Ktor.Serialization.kotlinX)
-    implementation(Logstash.logbackEncoder)
-    implementation(Prometheus.metricsCore)
-    implementation(TmsKafkaTools.kafkaApplication)
-    implementation(TmsKafkaTools.kafkaProducerUtils)
-    implementation(TmsCommonLib.utils)
-    implementation(TmsCommonLib.observability)
+    implementation(managed.jackson.datatypeJsr310)
+    implementation(managed.jackson.moduleKotlin)
+    implementation(managed.kafka.clients)
+    implementation(managed.kotlinLogging)
+    implementation(managed.prometheus.metricsCore)
+    implementation(managed.tms.kafka.application)
+    implementation(managed.tms.kafka.producerUtils)
+    implementation(managed.tms.commonLib.utils)
 
-    testImplementation(JunitPlatform.launcher)
-    testImplementation(JunitJupiter.api)
-    testImplementation(JunitJupiter.engine)
-    testImplementation(JunitJupiter.params)
-    testImplementation(Mockk.mockk)
-    testImplementation(Kotest.assertionsCore)
+    runtimeOnly(managed.logback.encoder)
+
+    testImplementation(managed.junit.api)
+    testImplementation(managed.junit.params)
+    testImplementation(managed.kotest.assertion)
+
+    testRuntimeOnly(managed.junit.engine)
+    testRuntimeOnly(managed.junit.launcher)
 }
 
 application {
